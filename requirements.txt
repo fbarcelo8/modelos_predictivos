@@ -4,3 +4,4 @@ pandas
 numpy
 matplotlib
 scikit-learn
+Pillow>=9.4.0
