@@ -179,8 +179,12 @@ def step_4():
 
     if st.button("Confirmar Modelo"):
         st.session_state['model'] = selected_model
-        st.success("Modelo seleccionado.")
-        st.session_state['step_5_enabled'] = True
+        if selected_model != "Regresión Lineal" and target_type == "Numérica":
+            st.warning(f"El modelo **{selected_model}** está en desarrollo y no está disponible actualmente.")
+            st.session_state['step_5_enabled'] = False  # Asegúrate de deshabilitar el siguiente paso
+        else:
+            st.success("Modelo seleccionado.")
+            st.session_state['step_5_enabled'] = True
 
 def step_5():
     if not st.session_state.get('step_5_enabled', False):
@@ -505,7 +509,7 @@ def main():
     # Crear columnas para centrar la imagen
     col1, col2, col3 = st.columns([1, 2, 1])  # Ajusta las proporciones para centrar la imagen
     with col2:
-        st.image("images/logo_butler.png", width=400)
+        st.image("C:/Users/barce/Desktop/logo_butler.png", width=400)
 
     # Mostrar el título debajo de la imagen
     st.title("Herramienta de Modelos Predictivos")
@@ -525,3 +529,4 @@ if __name__ == "__main__":
     if 'data' not in st.session_state:
         st.session_state['data'] = None
     main()
+    
