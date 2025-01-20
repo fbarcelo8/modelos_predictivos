@@ -12,7 +12,7 @@ from sklearn.metrics import (
 )
 import seaborn as sns
 import matplotlib.pyplot as plt
-
+import statsmodels.api as sm
 
 def preprocess_dataset(dataset, missing_threshold=0.3):
     """
@@ -626,7 +626,7 @@ def main():
     # Crear columnas para centrar la imagen
     col1, col2, col3 = st.columns([1, 2, 1])  # Ajusta las proporciones para centrar la imagen
     with col2:
-        st.image("images/logo_butler.png", width=400)
+        st.image("C:/Users/barce/Desktop/logo_butler.png", width=400)
 
     # Mostrar el título debajo de la imagen
     st.title("Herramienta de Modelos Predictivos")
@@ -646,4 +646,3 @@ if __name__ == "__main__":
     if 'data' not in st.session_state:
         st.session_state['data'] = None
     main()
-    
