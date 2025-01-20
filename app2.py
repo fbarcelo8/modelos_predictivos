@@ -181,7 +181,7 @@ def step_3():
         st.table(target_distribution.style.format({"Porcentaje": "{:.2f}%"}))
 
         # Crear un gráfico de barras con los colores personalizados
-        colors = ['#A759FE', '#FCFC10']
+        colors = ['#A759FE', '#FFFF00']
         fig, ax = plt.subplots()
         sns.barplot(
             x=target_distribution["Categoría"],
