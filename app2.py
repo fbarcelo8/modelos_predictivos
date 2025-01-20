@@ -681,26 +681,18 @@ def step_9():
     )
 
 def main():
-    # Crear columnas para centrar la imagen
-    col1, col2, col3 = st.columns([1, 2, 1])  # Ajusta las proporciones para centrar la imagen
-    with col2:
-        st.image("images/logo_butler.png", width=400)
-
-    # Mostrar el título centrado y más grande
+    # Centrar la imagen y el título juntos usando HTML y CSS
     st.markdown(
         """
-        <h1 style="text-align: center; font-size: 60px; font-weight: bold;">
-            AutoModeler
-        </h1>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        """
-        <h2 style="text-align: center; font-size: 30px; font-weight: bold;">
-            Herramienta de Modelos Predictivos Semiautomática
-        </h2>
+        <div style="text-align: center;">
+            <img src="images/logo_butler.png" width="400">
+            <h1 style="font-size: 60px; font-weight: bold; color: black; margin-top: 10px;">
+                AutoModeler
+            </h1>
+            <h2 style="font-size: 30px; font-weight: bold;">
+                Herramienta de Modelos Predictivos Semiautomática
+            </h2>
+        </div>
         """,
         unsafe_allow_html=True
     )
