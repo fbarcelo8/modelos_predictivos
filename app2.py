@@ -688,7 +688,7 @@ def main():
 
     # Mostrar el título debajo de la imagen
     st.title("AutoModeler")
-    st.subtitle("Herramienta de Modelos Predictivos Semiautomática")
+    st.markdown("## Herramienta de Modelos Predictivos Semiautomática")
 
     st.write("Sube tu dataset y sigue los pasos para analizarlo y entrenar un modelo.")
 
