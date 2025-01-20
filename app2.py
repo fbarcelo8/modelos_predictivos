@@ -326,7 +326,7 @@ def step_6():
     y = dataset[target]
 
     st.markdown("**Selecciona el tamaño del conjunto de entrenamiento:**")
-    test_size = st.slider("Selecciona el tamaño del conjunto de prueba", min_value=0.05, max_value=0.95, value=0.2, step=0.05)
+    test_size = st.slider("Selecciona el tamaño del conjunto de entrenamiento", min_value=0.05, max_value=0.95, value=0.2, step=0.05)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=1-test_size, random_state=42)
 
     # Preprocesamiento de datos
