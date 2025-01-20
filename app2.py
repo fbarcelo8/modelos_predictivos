@@ -393,7 +393,7 @@ def step_6():
 
         En una **regresión logística**, los coeficientes ($\\beta$) no se interpretan directamente como cambios en la variable dependiente (como en una regresión lineal), sino en términos de probabilidades y razones de probabilidades (**odds ratios**).
 
-        #### A. Forma del modelo
+        #### A) Forma del modelo
         La regresión logística modela la relación entre las variables explicativas ($X$) y la probabilidad de que ocurra un evento ($P(Y=1)$):
 
         """, unsafe_allow_html=True)
@@ -406,13 +406,11 @@ def step_6():
         - El lado izquierdo es el logaritmo de las **odds** (razón de probabilidades).
         - $\\beta_0$ es el intercepto, y $\\beta_i$ son los coeficientes asociados a cada $X_i$.
 
-        ---
 
         #### B. Interpretación de $\\beta_i$
-        - Si $\\beta_i > 0$: Aumentar $X_i$ incrementa la probabilidad de $Y=1$.
+        - Si $)\beta_i > 0$: Aumentar $X_i$ incrementa la probabilidad de $Y=1$.
         - Si $\\beta_i < 0$: Aumentar $X_i$ disminuye la probabilidad de $Y=1$.
 
-        ---
 
         #### C) Odds ratio
         El coeficiente transformado exponencialmente ($e^{\\beta_i}$) representa el cambio multiplicativo en las **odds** por cada unidad adicional de $X_i$:
@@ -428,7 +426,6 @@ def step_6():
         - Si $e^{\\beta_i} > 1$: Cada unidad adicional de $X_i$ **aumenta las odds**.
         - Si $e^{\\beta_i} < 1$: Cada unidad adicional de $X_i$ **disminuye las odds**.
 
-        ---
 
         #### D) Ejemplo práctico
         Supongamos que $\\beta_1 = 0.5$:
