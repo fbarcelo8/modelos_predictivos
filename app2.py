@@ -117,7 +117,20 @@ def step_2():
         reset_steps("step_2")
 
     if target:
-        unique_values = sorted(dataset[target].unique())
+        # Eliminar filas con valores faltantes en la variable target
+        missing_rows_before = len(dataset)
+        dataset_cleaned = dataset.dropna(subset=[target])
+        missing_rows_after = len(dataset_cleaned)
+        rows_removed = missing_rows_before - missing_rows_after
+
+        if rows_removed > 0:
+            st.warning(f"Se han eliminado **{rows_removed}** registros por contener valores faltantes en la variable target.")
+        else:
+            st.info("No se eliminaron registros por valores faltantes en la variable target.")
+
+        st.session_state['data'] = dataset_cleaned  # Guardamos el dataset limpio en la sesión
+        
+        unique_values = sorted(dataset_cleaned[target].unique())
         if len(unique_values) == 2:
             previous_pos_label = st.session_state.get('pos_label', unique_values[1])
             pos_label = st.selectbox(
@@ -128,9 +141,10 @@ def step_2():
             if pos_label != st.session_state.get('pos_label', None):
                 reset_steps("step_2")
             st.session_state['pos_label'] = pos_label
+        
         if st.button("Confirmar Target"):
             st.session_state['target'] = target
-            st.success("Variable Target seleccionada.")
+            st.success("Variable Target seleccionada y registros con valores faltantes eliminados.")
             st.session_state['step_3_and_4_enabled'] = True
 
 def step_3():
