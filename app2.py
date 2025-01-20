@@ -686,9 +686,24 @@ def main():
     with col2:
         st.image("images/logo_butler.png", width=400)
 
-    # Mostrar el título debajo de la imagen
-    st.title("AutoModeler")
-    st.markdown("## Herramienta de Modelos Predictivos Semiautomática")
+    # Mostrar el título centrado y más grande
+    st.markdown(
+        """
+        <h1 style="text-align: center; font-size: 60px; font-weight: bold; color: #4A90E2;">
+            AutoModeler
+        </h1>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        """
+        <h2 style="text-align: center; font-size: 30px; font-weight: normal;">
+            Herramienta de Modelos Predictivos Semiautomática
+        </h2>
+        """,
+        unsafe_allow_html=True
+    )
 
     st.write("Sube tu dataset y sigue los pasos para analizarlo y entrenar un modelo.")
 
@@ -700,6 +715,7 @@ def main():
     step_6()
     step_7()
     step_9()
+
 
 if __name__ == "__main__":
     if 'data' not in st.session_state:
