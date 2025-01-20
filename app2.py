@@ -687,7 +687,8 @@ def main():
         st.image("images/logo_butler.png", width=400)
 
     # Mostrar el título debajo de la imagen
-    st.title("Herramienta de Modelos Predictivos")
+    st.title("AutoModeler")
+    st.subtitle("Herramienta de Modelos Predictivos Semiautomática")
 
     st.write("Sube tu dataset y sigue los pasos para analizarlo y entrenar un modelo.")
 
