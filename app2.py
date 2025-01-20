@@ -180,12 +180,13 @@ def step_3():
         # Mostrar la tabla con porcentajes
         st.table(target_distribution.style.format({"Porcentaje": "{:.2f}%"}))
 
-        # Crear un gráfico de barras
+        # Crear un gráfico de barras con los colores personalizados
+        colors = ['#A759FE', '#FCFC10']
         fig, ax = plt.subplots()
         sns.barplot(
             x=target_distribution["Categoría"],
             y=target_distribution["Frecuencia"],
-            palette="viridis",
+            palette=colors,
             ax=ax
         )
         ax.set_title("Distribución de la Variable Target")
