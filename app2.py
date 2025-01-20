@@ -123,8 +123,11 @@ def step_2():
         missing_rows_after = len(dataset_cleaned)
         rows_removed = missing_rows_before - missing_rows_after
 
+        # Calcular el porcentaje de registros eliminados
+        percentage_removed = (rows_removed / missing_rows_before) * 100 if missing_rows_before > 0 else 0
+
         if rows_removed > 0:
-            st.warning(f"Se han eliminado **{rows_removed}** registros por contener valores faltantes en la variable target.")
+            st.warning(f"Se han eliminado **{rows_removed}** registros ({percentage_removed:.2f}% del total) por contener valores faltantes en la variable target.")
         else:
             st.info("No se eliminaron registros por valores faltantes en la variable target.")
 
