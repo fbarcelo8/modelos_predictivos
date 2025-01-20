@@ -681,18 +681,26 @@ def step_9():
     )
 
 def main():
-    # Centrar la imagen y el título juntos usando HTML y CSS
+    # Crear columnas para centrar la imagen
+    col1, col2, col3 = st.columns([1, 2, 1])  # Ajusta las proporciones para centrar la imagen
+    with col2:
+        st.image("images/logo_butler.png", width=400)
+
+    # Mostrar el título centrado y más grande
     st.markdown(
         """
-        <div style="text-align: center;">
-            <img src="images/logo_butler.png" width="400">
-            <h1 style="font-size: 60px; font-weight: bold; color: black; margin-top: 10px;">
-                AutoModeler
-            </h1>
-            <h2 style="font-size: 30px; font-weight: bold;">
-                Herramienta de Modelos Predictivos Semiautomática
-            </h2>
-        </div>
+        <h1 style="text-align: center; font-size: 60px; font-weight: bold; color: black;">
+            AutoModeler
+        </h1>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        """
+        <h2 style="text-align: center; font-size: 30px; font-weight: bold;">
+            Herramienta de Modelos Predictivos Semiautomática
+        </h2>
         """,
         unsafe_allow_html=True
     )
@@ -707,7 +715,6 @@ def main():
     step_6()
     step_7()
     step_9()
-
 
 if __name__ == "__main__":
     if 'data' not in st.session_state:
