@@ -689,7 +689,7 @@ def main():
     # Mostrar el título centrado y más grande
     st.markdown(
         """
-        <h1 style="text-align: center; font-size: 50px; font-weight: bold;">
+        <h1 style="text-align: center; font-size: 60px; font-weight: bold;">
             AutoModeler
         </h1>
         """,
