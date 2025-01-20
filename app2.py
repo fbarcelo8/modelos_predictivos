@@ -372,11 +372,12 @@ def step_6():
     # Calcular coeficientes después del preprocesamiento
     X_train_processed = preprocessor.fit_transform(X_train)
     if target_type == "Numérica":
-        regressor = LinearRegression()
-        regressor.fit(X_train_processed, y_train)
-        coefficients = regressor.coef_
-        coef_df = pd.DataFrame({"Variable": feature_names, "Coeficiente": coefficients})
-        st.write("**Coeficientes del modelo:**")
+        X_train_sm = sm.add_constant(X_train_processed)
+        ols_model = sm.OLS(y_train, X_train_sm).fit()
+        coefficients = ols_model.params[1:].values
+        p_values = ols_model.pvalues[1:].values
+        coef_df = pd.DataFrame({"Variable": feature_names, "Coeficiente": coefficients, "p-valor": p_values})
+        st.write("**Coeficientes del modelo con p-valores:**")
         st.table(coef_df)
         st.markdown("""
         ### 6.1. Interpretación de los coeficientes en una regresión lineal
