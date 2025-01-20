@@ -407,8 +407,8 @@ def step_6():
         - $\\beta_0$ es el intercepto, y $\\beta_i$ son los coeficientes asociados a cada $X_i$.
 
 
-        #### B. Interpretación de $\\beta_i$
-        - Si $)\beta_i > 0$: Aumentar $X_i$ incrementa la probabilidad de $Y=1$.
+        #### B) Interpretación de $\\beta_i$
+        - Si $\\beta_i > 0$: Aumentar $X_i$ incrementa la probabilidad de $Y=1$.
         - Si $\\beta_i < 0$: Aumentar $X_i$ disminuye la probabilidad de $Y=1$.
 
 
