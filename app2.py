@@ -378,6 +378,64 @@ def step_6():
         coef_df = pd.DataFrame({"Variable": feature_names, "Coeficiente": coefficients})
         st.write("**Coeficientes del modelo:**")
         st.table(coef_df)
+        st.markdown("""
+        ### 6.1. Interpretación de los coeficientes en una regresión lineal
+
+        En una **regresión lineal**, los coeficientes ($\\beta$) representan la relación entre las variables explicativas ($X$) y la variable dependiente ($Y$).
+
+        #### A) Forma del modelo
+        La ecuación general de una regresión lineal es:
+        """, unsafe_allow_html=True)
+
+        st.latex(r"""
+        Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \dots + \beta_n X_n + \epsilon
+        """)
+
+        st.markdown("""
+        - $Y$: Variable dependiente.
+        - $\\beta_0$: Intercepto, el valor de $Y$ cuando todas las $X_i = 0$.
+        - $\\beta_i$: Coeficiente asociado a $X_i$, que mide el efecto de $X_i$ sobre $Y$.
+        - $\\epsilon$: Término de error.
+
+
+        #### B) Interpretación de $\\beta_i$
+        Cada coeficiente $\\beta_i$ indica el **cambio esperado en $Y$** por cada unidad adicional en $X_i$, manteniendo constantes las demás variables.
+
+        ### Casos específicos:
+        - Si $\\beta_i > 0$: Aumentar $X_i$ incrementa $Y$.
+        - Si $\\beta_i < 0$: Aumentar $X_i$ disminuye $Y$.
+        - Si $\\beta_i = 0$: $X_i$ no tiene efecto sobre $Y$.
+
+
+        #### C) Interpretación del intercepto ($\\beta_0$)
+        El intercepto $\\beta_0$ representa el valor esperado de $Y$ cuando todas las $X_i = 0$. 
+
+        - En algunos casos, este valor puede no tener un significado práctico si $X_i = 0$ no es realista.
+
+
+        #### D) Ejemplo práctico
+        Supongamos el modelo:
+        """, unsafe_allow_html=True)
+
+        st.latex(r"""
+        Y = 3 + 2X_1 - 0.5X_2
+        """)
+
+        st.markdown("""
+        1. Intercepto ($\\beta_0 = 3$):
+        - Si $X_1 = 0$ y $X_2 = 0$, $Y = 3$.
+        2. Coeficiente de $X_1$ ($\\beta_1 = 2$):
+        - Por cada unidad adicional en $X_1$, $Y$ aumenta en 2 unidades, manteniendo constante $X_2$.
+        3. Coeficiente de $X_2$ ($\\beta_2 = -0.5$):
+        - Por cada unidad adicional en $X_2$, $Y$ disminuye en 0.5 unidades, manteniendo constante $X_1$.
+
+
+        #### E) Resumen
+        En la regresión lineal:
+
+        - Los coeficientes ($\\beta_i$) miden el cambio esperado en $Y$ por cada unidad adicional en $X_i$, controlando por las demás variables.
+        - El intercepto ($\\beta_0$) representa el valor de $Y$ cuando todas las $X_i = 0$.
+        """, unsafe_allow_html=True)
     else:
         X_train_sm = sm.add_constant(X_train_processed)
         logit_model = sm.Logit(y_train, X_train_sm).fit(disp=0)
