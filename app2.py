@@ -354,8 +354,12 @@ def step_6():
     y = dataset[target]
 
     st.markdown("**Selecciona el tamaño del conjunto de entrenamiento:**")
-    test_size = st.slider("Selecciona el tamaño del conjunto de entrenamiento", min_value=0.05, max_value=0.95, value=0.2, step=0.05)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=1-test_size, random_state=42)
+    train_size = st.slider("Selecciona el tamaño del conjunto de entrenamiento", 
+                           min_value=0.05, max_value=0.95, value=0.8, step=0.05)
+    st.session_state['train_size'] = train_size
+    test_size = 1 - train_size
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
     # Preprocesamiento de datos
     numeric_features = X.select_dtypes(include=["int64", "float64"]).columns
@@ -701,14 +705,22 @@ def step_9():
     predictors = fixed_predictors + candidate_predictors
     X = dataset[predictors]
     y = dataset[target]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    test_size = 1 - st.session_state.get('train_size', 0.8)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
     y_pred = model.predict(X_test)
+
+    # Comparación de valores reales vs predichos
     comparison = pd.DataFrame({"Real": y_test, "Predicción": y_pred})
-    st.write(comparison)
+    st.write("**Comparación entre valores reales y predichos:**")
+    st.dataframe(comparison)
+
+    # Descargar resultados
+    csv_data = comparison.to_csv(index=False).encode('utf-8')
     st.download_button(
         label="Descargar Resultados",
-        data=comparison.to_csv(index=False),
+        data=csv_data,
         file_name="resultados_modelo.csv",
         mime="text/csv"
     )
@@ -717,7 +729,7 @@ def main():
     # Crear columnas para centrar la imagen
     col1, col2, col3 = st.columns([1, 4, 1])  # Ajusta las proporciones para centrar la imagen
     with col2:
-        st.image("images/logo_butler1.png", width=450)
+        st.image("images/logo_butler.png", width=450)
 
     # Mostrar el título centrado y más grande
     st.markdown(
