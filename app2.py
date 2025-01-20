@@ -375,8 +375,9 @@ def step_6():
         regressor = LinearRegression()
         regressor.fit(X_train_processed, y_train)
         coefficients = regressor.coef_
-        coef_df = pd.DataFrame({"Variable": feature_names, "Coeficiente": coefficients})
-        st.write("**Coeficientes del modelo:**")
+        # Ajustar las variables predictoras al número correcto de columnas
+        coef_df = pd.DataFrame({"Variable": feature_names, "Coeficiente": coefficients, "p-valor": p_values})
+        st.write("**Coeficientes del modelo con p-valores:**")
         st.table(coef_df)
         st.markdown("""
         ### 6.1. Interpretación de los coeficientes en una regresión lineal
