@@ -249,21 +249,44 @@ def step_5():
     available_predictors = [col for col in dataset.columns if col != target]
 
     # Filtrar las variables predictoras seleccionadas previamente para que sean válidas
-    previous_predictors = st.session_state.get('predictors', [])
-    valid_previous_predictors = [col for col in previous_predictors if col in available_predictors]
+    previous_fixed_predictors = st.session_state.get('fixed_predictors', [])
+    valid_previous_fixed_predictors = [col for col in previous_fixed_predictors if col in available_predictors]
 
-    # Mostrar el multiselect con los valores válidos
-    predictors = st.multiselect(
-        "Selecciona las Variables Predictoras",
+    # Excluir variables fijas de las candidatas
+    remaining_predictors = [col for col in available_predictors if col not in valid_previous_fixed_predictors]
+    previous_candidate_predictors = st.session_state.get('candidate_predictors', [])
+    valid_previous_candidate_predictors = [col for col in previous_candidate_predictors if col in remaining_predictors]
+
+    # Selección de variables predictoras fijas
+    st.markdown("**Selecciona las variables predictoras fijas**")
+    st.markdown(
+        "Las variables seleccionadas en esta primera casilla formarán parte, si o si, del modelo final, independientemente de su significancia o relevancia estadística dentro del modelo final."
+    )
+    fixed_predictors = st.multiselect(
+        "Selecciona las Variables Predictoras Fijas",
         available_predictors,
-        default=valid_previous_predictors
+        default=valid_previous_fixed_predictors
+    )
+
+    # Actualizar opciones para candidatas excluyendo las fijas
+    remaining_predictors = [col for col in available_predictors if col not in fixed_predictors]
+
+    # Selección de variables predictoras candidatas
+    st.markdown("**Selecciona las variables predictoras candidatas**")
+    st.markdown(
+        "Las variables seleccionadas en esta segunda casilla, formarán parte del conjunto de 'candidatas'. Es decir, de entre todas las aquí se seleccionarán las que, conjuntamente con la/s variable/s fija/s seleccionada/s (en caso de que haya), presenten los mejores resultados posibles para el modelo final."
+    )
+    candidate_predictors = st.multiselect(
+        "Selecciona las Variables Predictoras Candidatas",
+        remaining_predictors,
+        default=valid_previous_candidate_predictors
     )
 
     # Si las variables predictoras seleccionadas cambian, reinicia los pasos posteriores
-    if set(predictors) != set(valid_previous_predictors):
+    if set(fixed_predictors) != set(valid_previous_fixed_predictors) or set(candidate_predictors) != set(valid_previous_candidate_predictors):
         reset_steps("step_5")
 
-    if not predictors:
+    if not fixed_predictors and not candidate_predictors:
         st.warning("Selecciona al menos una variable predictora.")
         return
 
@@ -276,10 +299,12 @@ def step_5():
     )
 
     if st.button("Confirmar Variables Predictoras"):
+        selected_predictors = fixed_predictors + candidate_predictors
+
         if handle_missing == "Eliminar filas con valores faltantes":
             # Eliminar registros con valores faltantes
             missing_rows_before = len(dataset)
-            dataset_cleaned = dataset.dropna(subset=predictors)
+            dataset_cleaned = dataset.dropna(subset=selected_predictors)
             missing_rows_after = len(dataset_cleaned)
             rows_removed = missing_rows_before - missing_rows_after
 
@@ -288,9 +313,9 @@ def step_5():
 
                 # Calcular cuántos registros fueron eliminados por cada variable
                 impact_table = pd.DataFrame({
-                    "Variable": predictors,
-                    "Registros Eliminados": [dataset[col].isnull().sum() for col in predictors],
-                    "Porcentaje Eliminado (%)": [(dataset[col].isnull().sum() / len(dataset) * 100).round(2) for col in predictors]
+                    "Variable": selected_predictors,
+                    "Registros Eliminados": [dataset[col].isnull().sum() for col in selected_predictors],
+                    "Porcentaje Eliminado (%)": [(dataset[col].isnull().sum() / len(dataset) * 100).round(2) for col in selected_predictors]
                 }).sort_values(by="Registros Eliminados", ascending=False)
 
                 # Mostrar la tabla ordenada
@@ -304,7 +329,8 @@ def step_5():
             st.stop()
 
         # Actualizar el estado global
-        st.session_state['predictors'] = predictors
+        st.session_state['fixed_predictors'] = fixed_predictors
+        st.session_state['candidate_predictors'] = candidate_predictors
         st.session_state['data'] = dataset_cleaned
         st.session_state['step_6_enabled'] = True
         st.session_state['step_7_enabled'] = True
@@ -318,10 +344,12 @@ def step_6():
 
     st.header("Paso 6: Entrenamiento del Modelo")
     dataset = st.session_state['data']
-    predictors = st.session_state['predictors']
+    fixed_predictors = st.session_state['fixed_predictors']
+    candidate_predictors = st.session_state['candidate_predictors']
     target = st.session_state['target']
     target_type = st.session_state['target_type']
 
+    predictors = fixed_predictors + candidate_predictors
     X = dataset[predictors]
     y = dataset[target]
 
@@ -501,9 +529,12 @@ def step_7():
     st.header("Paso 7: Evaluación del Modelo")
     model = st.session_state['trained_model']
     dataset = st.session_state['data']
-    predictors = st.session_state['predictors']
+    fixed_predictors = st.session_state['fixed_predictors']
+    candidate_predictors = st.session_state['candidate_predictors']
     target = st.session_state['target']
     target_type = st.session_state['target_type']
+
+    predictors = fixed_predictors + candidate_predictors
 
     X = dataset[predictors]
     y = dataset[target]
@@ -663,9 +694,11 @@ def step_9():
     st.header("Paso 9: Visualización de Resultados")
     model = st.session_state['trained_model']
     dataset = st.session_state['data']
-    predictors = st.session_state['predictors']
+    fixed_predictors = st.session_state['fixed_predictors']
+    candidate_predictors = st.session_state['candidate_predictors']
     target = st.session_state['target']
 
+    predictors = fixed_predictors + candidate_predictors
     X = dataset[predictors]
     y = dataset[target]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -684,7 +717,7 @@ def main():
     # Crear columnas para centrar la imagen
     col1, col2, col3 = st.columns([1, 4, 1])  # Ajusta las proporciones para centrar la imagen
     with col2:
-        st.image("images/logo_butler1.png", width=450)
+        st.image("C:/Users/barce/Desktop/logo_butler.png", width=400)
 
     # Mostrar el título centrado y más grande
     st.markdown(
