@@ -389,11 +389,11 @@ def step_6():
         st.write("**Coeficientes del modelo con p-valores:**")
         st.table(coef_df)
         st.markdown("""
-        # Interpretación de los coeficientes en una regresión logística
+        ## Interpretación de los coeficientes en una regresión logística
 
         En una **regresión logística**, los coeficientes ($\\beta$) no se interpretan directamente como cambios en la variable dependiente (como en una regresión lineal), sino en términos de probabilidades y razones de probabilidades (**odds ratios**).
 
-        ## 1. Forma del modelo
+        ### 6.1. Forma del modelo
         La regresión logística modela la relación entre las variables explicativas ($X$) y la probabilidad de que ocurra un evento ($P(Y=1)$):
 
         """, unsafe_allow_html=True)
@@ -408,13 +408,13 @@ def step_6():
 
         ---
 
-        ## 2. Interpretación de $\\beta_i$
+        ### 6.2. Interpretación de $\\beta_i$
         - Si $\\beta_i > 0$: Aumentar $X_i$ incrementa la probabilidad de $Y=1$.
         - Si $\\beta_i < 0$: Aumentar $X_i$ disminuye la probabilidad de $Y=1$.
 
         ---
 
-        ## 3. Odds ratio
+        ### 6.3. Odds ratio
         El coeficiente transformado exponencialmente ($e^{\\beta_i}$) representa el cambio multiplicativo en las **odds** por cada unidad adicional de $X_i$:
 
         """, unsafe_allow_html=True)
@@ -430,7 +430,7 @@ def step_6():
 
         ---
 
-        ## 4. Ejemplo práctico
+        ### 6.4. Ejemplo práctico
         Supongamos que $\\beta_1 = 0.5$:
         - Las **odds** aumentan en un factor de $e^{0.5} \\approx 1.65$ por cada unidad adicional de $X_1$. 
         - Esto significa que el evento $Y=1$ es 1.65 veces más probable.
