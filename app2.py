@@ -92,7 +92,7 @@ def evaluar_identificadores(df, pesos=None, umbral_identificadora=12, umbral_pos
     """
     # Pesos por defecto si no se especifican
     if pesos is None:
-        pesos_personalizados = {
+        pesos = {
             'cardinalidad_relativa': 3,
             'ausencia_nulos': 1,
             'control_duplicados': 2,
