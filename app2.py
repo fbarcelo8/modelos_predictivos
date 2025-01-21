@@ -203,6 +203,7 @@ def step_4():
     st.header("Paso 4: Selección del Modelo")
     target_type = st.session_state['target_type']
     previous_model = st.session_state.get('model', None)
+    previous_train_size = st.session_state.get('train_size', 0.8)
 
     if target_type == "Numérica":
         # Lista de modelos disponibles para variables numéricas
@@ -228,8 +229,19 @@ def step_4():
     if selected_model != previous_model:
         reset_steps("step_3_and_4")
 
+    # Selección del tamaño del conjunto de entrenamiento
+    st.subheader("Seleccionar el tamaño de conjunto de entrenamiento")
+    train_size = st.slider("Selecciona el tamaño del conjunto de entrenamiento", 
+                           min_value=0.05, max_value=0.95, value=previous_train_size, step=0.05)
+    
+    # Si el modelo o train_size cambian, se resetean los pasos posteriores
+    if selected_model != previous_model or train_size != previous_train_size:
+        reset_steps("step_3_and_4")
+
     if st.button("Confirmar Modelo"):
         st.session_state['model'] = selected_model
+        st.session_state['train_size'] = train_size
+
         if selected_model != "Regresión Lineal" and target_type == "Numérica":
             st.warning(f"El modelo **{selected_model}** está en desarrollo y no está disponible actualmente.")
             st.session_state['step_5_enabled'] = False  # Asegúrate de deshabilitar el siguiente paso
@@ -245,46 +257,45 @@ def step_5():
     dataset = st.session_state['data']
     target = st.session_state['target']
 
-    # Obtener las opciones actuales de variables predictoras
+    # Obtener todas las variables predictoras disponibles
     available_predictors = [col for col in dataset.columns if col != target]
 
-    # Filtrar las variables predictoras seleccionadas previamente para que sean válidas
-    previous_fixed_predictors = st.session_state.get('fixed_predictors', [])
-    valid_previous_fixed_predictors = [col for col in previous_fixed_predictors if col in available_predictors]
+    # Inicializar estado si no existe
+    if 'fixed_predictors' not in st.session_state:
+        st.session_state['fixed_predictors'] = []
+    if 'candidate_predictors' not in st.session_state:
+        st.session_state['candidate_predictors'] = []
 
-    # Excluir variables fijas de las candidatas
-    remaining_predictors = [col for col in available_predictors if col not in valid_previous_fixed_predictors]
-    previous_candidate_predictors = st.session_state.get('candidate_predictors', [])
-    valid_previous_candidate_predictors = [col for col in previous_candidate_predictors if col in remaining_predictors]
+    # Variables actualmente seleccionadas
+    fixed_predictors_selected = st.session_state['fixed_predictors']
+    candidate_predictors_selected = st.session_state['candidate_predictors']
+
+    # Crear listas dinámicas excluyendo las seleccionadas en la otra lista
+    fixed_options = [col for col in available_predictors if col not in candidate_predictors_selected]
+    candidate_options = [col for col in available_predictors if col not in fixed_predictors_selected]
 
     # Selección de variables predictoras fijas
     st.markdown("**Selecciona las variables predictoras fijas**")
-    st.markdown(
-        "Las variables seleccionadas en esta primera casilla formarán parte, si o si, del modelo final, independientemente de su significancia o relevancia estadística dentro del modelo final."
-    )
     fixed_predictors = st.multiselect(
         "Selecciona las Variables Predictoras Fijas",
-        available_predictors,
-        default=valid_previous_fixed_predictors
+        fixed_options,
+        default=fixed_predictors_selected
     )
-
-    # Actualizar opciones para candidatas excluyendo las fijas
-    remaining_predictors = [col for col in available_predictors if col not in fixed_predictors]
 
     # Selección de variables predictoras candidatas
     st.markdown("**Selecciona las variables predictoras candidatas**")
-    st.markdown(
-        "Las variables seleccionadas en esta segunda casilla, formarán parte del conjunto de 'candidatas'. Es decir, de entre todas las aquí se seleccionarán las que, conjuntamente con la/s variable/s fija/s seleccionada/s (en caso de que haya), presenten los mejores resultados posibles para el modelo final."
-    )
     candidate_predictors = st.multiselect(
         "Selecciona las Variables Predictoras Candidatas",
-        remaining_predictors,
-        default=valid_previous_candidate_predictors
+        candidate_options,
+        default=candidate_predictors_selected
     )
 
-    # Si las variables predictoras seleccionadas cambian, reinicia los pasos posteriores
-    if set(fixed_predictors) != set(valid_previous_fixed_predictors) or set(candidate_predictors) != set(valid_previous_candidate_predictors):
+    # Verificar si las selecciones han cambiado
+    if set(fixed_predictors) != set(fixed_predictors_selected) or set(candidate_predictors) != set(candidate_predictors_selected):
+        st.session_state['fixed_predictors'] = fixed_predictors
+        st.session_state['candidate_predictors'] = candidate_predictors
         reset_steps("step_5")
+        st.rerun()  # Reiniciar la interfaz para actualizar dinámicamente
 
     if not fixed_predictors and not candidate_predictors:
         st.warning("Selecciona al menos una variable predictora.")
@@ -348,16 +359,12 @@ def step_6():
     candidate_predictors = st.session_state['candidate_predictors']
     target = st.session_state['target']
     target_type = st.session_state['target_type']
+    train_size = st.session_state.get('train_size', 0.8)
+    test_size = 1 - train_size
 
     predictors = fixed_predictors + candidate_predictors
     X = dataset[predictors]
     y = dataset[target]
-
-    st.markdown("**Selecciona el tamaño del conjunto de entrenamiento:**")
-    train_size = st.slider("Selecciona el tamaño del conjunto de entrenamiento", 
-                           min_value=0.05, max_value=0.95, value=0.8, step=0.05)
-    st.session_state['train_size'] = train_size
-    test_size = 1 - train_size
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
@@ -375,10 +382,8 @@ def step_6():
     # Entrenar el modelo
     if target_type == "Numérica":
         st.markdown(
-            "**Regresión Lineal:** Se ha dividido el conjunto de datos en un 80% para entrenamiento y un 20% para test.<br>"
-            "Se ha utilizado la regresión lineal para modelar la relación entre las variables predictoras y la variable objetivo.<br>"
-            "El modelo se ajustará minimizando el error cuadrático medio (MSE).",
-            unsafe_allow_html=True
+            "**Regresión Lineal:** Se ha dividido el conjunto de datos en {}% entrenamiento y {}% prueba."
+            .format(int(train_size * 100), int(test_size * 100))
         )
         model = Pipeline([
             ("preprocessor", preprocessor),
@@ -386,10 +391,8 @@ def step_6():
         ])
     else:
         st.markdown(
-            "**Regresión Logística:** Se ha dividido el conjunto de datos en un 80% para entrenamiento y un 20% para test.<br>"
-            "Se ha utilizado la regresión logística para predecir probabilidades de clasificación en función de las variables predictoras.<br>"
-            "El modelo se ha entrenado usando validación cruzada para garantizar una mejor generalización.",
-            unsafe_allow_html=True
+            "**Regresión Logística:** Se ha dividido el conjunto de datos en {}% entrenamiento y {}% prueba."
+            .format(int(train_size * 100), int(test_size * 100))
         )
         model = Pipeline([
             ("preprocessor", preprocessor),
@@ -729,7 +732,7 @@ def main():
     # Crear columnas para centrar la imagen
     col1, col2, col3 = st.columns([1, 4, 1])  # Ajusta las proporciones para centrar la imagen
     with col2:
-        st.image("images/logo_butler.png", width=450)
+        st.image("C:/Users/barce/Desktop/logo_butler.png", width=450)
 
     # Mostrar el título centrado y más grande
     st.markdown(
