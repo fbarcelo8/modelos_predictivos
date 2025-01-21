@@ -69,7 +69,7 @@ def reset_steps(from_step):
         if step in st.session_state:
             del st.session_state[step]
 
-def evaluar_identificadores(df, umbral_identificadora=7, umbral_posible_identificadora=4):
+def evaluar_identificadores(df, umbral_identificadora=7, umbral_posible_identificadora=5):
     """
     Evalúa las columnas de un DataFrame para determinar si son identificadoras, 
     posibles identificadoras o no identificadoras, basándose en una serie de criterios.
@@ -384,7 +384,7 @@ def step_5():
 
         # Advertir sobre las posibles identificadoras
         if posibles_identificadoras:
-            st.warning(f"Las siguientes columnas han sido identificadas como posibles identificadoras y pueden afectar el modelo si se seleccionan: {', '.join(posibles_identificadoras)}")
+            st.warning(f"Las siguientes columnas han sido identificadas como posibles identificadoras y pueden afectar al modelo si se seleccionan: {', '.join(posibles_identificadoras)}")
 
     # Variables actualmente seleccionadas
     fixed_predictors_selected = st.session_state['fixed_predictors']
