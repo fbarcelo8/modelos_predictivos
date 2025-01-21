@@ -1,1 +1,12 @@
-
+from .detect_variable_type import *
+from .evaluar_identificadores import *
+from .preprocess_dataset import *
+from .reset_steps import *
+from .step_1 import *
+from .step_2 import *
+from .step_3 import *
+from .step_4 import *
+from .step_5 import *
+from .step_6 import *
+from .step_7 import *
+from .step_9 import *
