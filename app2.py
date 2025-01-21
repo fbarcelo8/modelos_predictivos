@@ -69,7 +69,7 @@ def reset_steps(from_step):
         if step in st.session_state:
             del st.session_state[step]
 
-def evaluar_identificadores_con_pesos(df, pesos=None, umbral_identificadora=12, umbral_posible_identificadora=8):
+def evaluar_identificadores(df, pesos=None, umbral_identificadora=12, umbral_posible_identificadora=8):
     """
     Evalúa las columnas de un DataFrame para determinar si son identificadoras, 
     posibles identificadoras o no identificadoras, basándose en una serie de criterios ponderados.
