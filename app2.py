@@ -372,7 +372,7 @@ def step_5():
 
         # Advertir sobre las posibles identificadoras
         if posibles_identificadoras:
-            st.warning(f"Las siguientes columnas han sido identificadas como posibles identificadoras y pueden afectar al modelo si se seleccionan: {', '.join(posibles_identificadoras)}")
+            st.warning(f"Las siguientes columnas han sido identificadas como posibles identificadoras y pueden afectar al modelo si se seleccionan: {', '.join(posibles_identificadoras)}. Ten en cuenta que si se usan variables identificadoras como posibles predictoras, el modelo tiene altas probabilidades de dar error, por lo que se recomienda deseleccionarlas.")
 
     # Variables actualmente seleccionadas
     fixed_predictors_selected = st.session_state['fixed_predictors']
