@@ -69,6 +69,99 @@ def reset_steps(from_step):
         if step in st.session_state:
             del st.session_state[step]
 
+def evaluar_identificadores(df, umbral_identificadora=7, umbral_posible_identificadora=4):
+    """
+    Evalúa las columnas de un DataFrame para determinar si son identificadoras, 
+    posibles identificadoras o no identificadoras, basándose en una serie de criterios.
+
+    Parámetros:
+    ----------
+    df : pd.DataFrame
+        DataFrame que contiene las columnas a evaluar.
+    umbral_identificadora : int, opcional
+        Número de criterios necesarios para clasificar una columna como "Identificadora".
+        Valor por defecto: 8.
+    umbral_posible_identificadora : int, opcional
+        Número de criterios necesarios para clasificar una columna como "Posible identificadora".
+        Valor por defecto: 5.
+
+    Retorna:
+    -------
+    pd.DataFrame
+        DataFrame con las columnas, el puntaje obtenido y su clasificación.
+    """
+    resultados = []
+
+    for columna in df.columns:
+        puntos = 0
+
+        # 1. Cardinalidad relativa (50% o más valores únicos)
+        if df[columna].nunique() >= 0.5 * len(df):
+            puntos += 1
+
+        # 2. Consistencia dentro de grupos (si aplica otra columna de referencia)
+        if df[columna].is_unique:
+            puntos += 1
+
+        # 3. Ausencia de valores nulos
+        if df[columna].isna().sum() == 0:
+            puntos += 1
+
+        # 4. Presencia controlada de duplicados (ningún valor aparece demasiado)
+        if df[columna].value_counts().max() < 0.5 * len(df):
+            puntos += 1
+
+        # 5. Distribución no uniforme (evita columnas altamente concentradas)
+        if df[columna].value_counts(normalize=True).max() < 0.5:
+            puntos += 1
+
+        # 6. Correlación baja con otras columnas (solo para columnas numéricas)
+        if pd.api.types.is_numeric_dtype(df[columna]):
+            try:
+                correlaciones = df.select_dtypes(include=['number']).corrwith(df[columna]).drop(columna, errors='ignore')
+                if correlaciones.abs().max() < 0.1:
+                    puntos += 1
+            except Exception as e:
+                print(f"Error calculando la correlación de {columna}: {e}")
+
+        # 7. Relación con combinaciones de otras columnas
+        if 'columna_referencia' in df.columns:  # Ajustar según contexto
+            if df.groupby('columna_referencia')[columna].nunique().max() == 1:
+                puntos += 1
+
+        # 8. Compatibilidad de tipos (entero o texto comúnmente usados)
+        if df[columna].dtype in ['int64', 'object']:
+            puntos += 1
+
+        # 9. Pocas repeticiones por entidad (si hay referencia cruzada)
+        if 'columna_referencia' in df.columns:  # Ajustar según contexto
+            if df.groupby('columna_referencia')[columna].value_counts().max() <= 5:  # Ejemplo: límite 5
+                puntos += 1
+
+        # 10. Monotonicidad
+        if not (df[columna].is_monotonic_increasing or df[columna].is_monotonic_decreasing):
+            puntos += 1
+
+        # Clasificar según los puntos obtenidos
+        if puntos >= umbral_identificadora:
+            clasificacion = 'Identificadora'
+        elif puntos >= umbral_posible_identificadora:
+            clasificacion = 'Posible identificadora'
+        else:
+            clasificacion = 'No identificadora'
+
+        # Guardar resultados
+        resultados.append({
+            'Columna': columna,
+            'Puntaje': puntos,
+            'Clasificación': clasificacion
+        })
+
+    # Crear DataFrame con los resultados
+    resultados_df = pd.DataFrame(resultados)
+
+    return resultados_df
+
 def step_1():
     st.header("Paso 1: Subida de Archivo")
     uploaded_file = st.file_uploader("Sube tu archivo CSV o Excel", type=["csv", "xlsx", "xls"])
@@ -257,14 +350,41 @@ def step_5():
     dataset = st.session_state['data']
     target = st.session_state['target']
 
-    # Obtener todas las variables predictoras disponibles
-    available_predictors = [col for col in dataset.columns if col != target]
-
     # Inicializar estado si no existe
     if 'fixed_predictors' not in st.session_state:
         st.session_state['fixed_predictors'] = []
     if 'candidate_predictors' not in st.session_state:
         st.session_state['candidate_predictors'] = []
+
+    # Obtener todas las variables predictoras disponibles
+    available_predictors = [col for col in dataset.columns if col != target]
+
+    if dataset is not None:
+        # Evaluar columnas identificadoras
+        resultado_identificadores = evaluar_identificadores(dataset)
+
+        # Filtrar las columnas identificadoras
+        identificadoras = resultado_identificadores[resultado_identificadores['Clasificación'] == 'Identificadora']['Columna'].tolist()
+        posibles_identificadoras = resultado_identificadores[resultado_identificadores['Clasificación'] == 'Posible identificadora']['Columna'].tolist()
+
+        # Eliminar las columnas identificadoras del dataset antes de continuar
+        dataset = dataset.drop(columns=identificadoras, errors='ignore')
+
+        # Guardar el dataset filtrado en la sesión bajo el mismo nombre
+        st.session_state['data'] = dataset
+
+        # Actualizar la lista de variables predictoras disponibles después de la eliminación
+        available_predictors = [col for col in dataset.columns if col != target]
+
+        # Mostrar un mensaje de éxito con las columnas eliminadas
+        if identificadoras:
+            st.success(f"Se han eliminado {len(identificadoras)} columnas identificadoras del análisis: {', '.join(identificadoras)}")
+        else:
+            st.info("No se encontraron columnas identificadoras para eliminar.")
+
+        # Advertir sobre las posibles identificadoras
+        if posibles_identificadoras:
+            st.warning(f"Las siguientes columnas han sido identificadas como posibles identificadoras y pueden afectar el modelo si se seleccionan: {', '.join(posibles_identificadoras)}")
 
     # Variables actualmente seleccionadas
     fixed_predictors_selected = st.session_state['fixed_predictors']
