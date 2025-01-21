@@ -69,83 +69,97 @@ def reset_steps(from_step):
         if step in st.session_state:
             del st.session_state[step]
 
-def evaluar_identificadores(df, umbral_identificadora=7, umbral_posible_identificadora=5):
+def evaluar_identificadores_con_pesos(df, pesos=None, umbral_identificadora=12, umbral_posible_identificadora=8):
     """
     Evalúa las columnas de un DataFrame para determinar si son identificadoras, 
-    posibles identificadoras o no identificadoras, basándose en una serie de criterios.
+    posibles identificadoras o no identificadoras, basándose en una serie de criterios ponderados.
 
     Parámetros:
     ----------
     df : pd.DataFrame
         DataFrame que contiene las columnas a evaluar.
+    pesos : dict, opcional
+        Diccionario con los pesos asignados a cada criterio. Si no se especifica, todos los criterios tendrán un peso de 1.
     umbral_identificadora : int, opcional
-        Número de criterios necesarios para clasificar una columna como "Identificadora".
-        Valor por defecto: 8.
+        Puntaje mínimo para clasificar una columna como "Identificadora".
     umbral_posible_identificadora : int, opcional
-        Número de criterios necesarios para clasificar una columna como "Posible identificadora".
-        Valor por defecto: 5.
+        Puntaje mínimo para clasificar una columna como "Posible identificadora".
 
     Retorna:
     -------
     pd.DataFrame
-        DataFrame con las columnas, el puntaje obtenido y su clasificación.
+        DataFrame con las columnas, el puntaje ponderado obtenido y su clasificación.
     """
+    # Pesos por defecto si no se especifican
+    if pesos is None:
+        pesos_personalizados = {
+            'cardinalidad_relativa': 3,
+            'ausencia_nulos': 1,
+            'control_duplicados': 2,
+            'distribucion_uniforme': 1,
+            'correlacion_baja': 1,
+            'relacion_combinaciones': 3,
+            'compatibilidad_tipos': 1,
+            'pocas_repeticiones': 2,
+            'consistencia_grupos': 3,
+            'monotonicidad': 1
+        }
+
     resultados = []
 
     for columna in df.columns:
-        puntos = 0
+        puntaje = 0
+
+        # Evaluar criterios y aplicar pesos
 
         # 1. Cardinalidad relativa (50% o más valores únicos)
         if df[columna].nunique() >= 0.5 * len(df):
-            puntos += 1
+            puntaje += pesos['cardinalidad_relativa']
 
-        # 2. Consistencia dentro de grupos (si aplica otra columna de referencia)
-        if df[columna].is_unique:
-            puntos += 1
-
-        # 3. Ausencia de valores nulos
+        # 2. Ausencia de valores nulos
         if df[columna].isna().sum() == 0:
-            puntos += 1
+            puntaje += pesos['ausencia_nulos']
 
-        # 4. Presencia controlada de duplicados (ningún valor aparece demasiado)
+        # 3. Presencia controlada de duplicados
         if df[columna].value_counts().max() < 0.5 * len(df):
-            puntos += 1
+            puntaje += pesos['control_duplicados']
 
-        # 5. Distribución no uniforme (evita columnas altamente concentradas)
+        # 4. Distribución no uniforme
         if df[columna].value_counts(normalize=True).max() < 0.5:
-            puntos += 1
+            puntaje += pesos['distribucion_uniforme']
 
-        # 6. Correlación baja con otras columnas (solo para columnas numéricas)
+        # 5. Correlación baja con otras columnas
         if pd.api.types.is_numeric_dtype(df[columna]):
-            try:
-                correlaciones = df.select_dtypes(include=['number']).corrwith(df[columna]).drop(columna, errors='ignore')
-                if correlaciones.abs().max() < 0.1:
-                    puntos += 1
-            except Exception as e:
-                print(f"Error calculando la correlación de {columna}: {e}")
+            correlaciones = df.corrwith(df[columna]).drop(columna, errors='ignore')
+            if correlaciones.abs().max() < 0.1:
+                puntaje += pesos['correlacion_baja']
 
-        # 7. Relación con combinaciones de otras columnas
+        # 6. Relación con combinaciones de otras columnas
         if 'columna_referencia' in df.columns:  # Ajustar según contexto
             if df.groupby('columna_referencia')[columna].nunique().max() == 1:
-                puntos += 1
+                puntaje += pesos['relacion_combinaciones']
 
-        # 8. Compatibilidad de tipos (entero o texto comúnmente usados)
+        # 7. Compatibilidad de tipos
         if df[columna].dtype in ['int64', 'object']:
-            puntos += 1
+            puntaje += pesos['compatibilidad_tipos']
 
-        # 9. Pocas repeticiones por entidad (si hay referencia cruzada)
+        # 8. Pocas repeticiones por entidad
         if 'columna_referencia' in df.columns:  # Ajustar según contexto
-            if df.groupby('columna_referencia')[columna].value_counts().max() <= 5:  # Ejemplo: límite 5
-                puntos += 1
+            if df.groupby('columna_referencia')[columna].value_counts().max() <= 5:
+                puntaje += pesos['pocas_repeticiones']
+
+        # 9. Consistencia dentro de grupos
+        if df[columna].is_unique:
+            puntaje += pesos['consistencia_grupos']
 
         # 10. Monotonicidad
         if not (df[columna].is_monotonic_increasing or df[columna].is_monotonic_decreasing):
-            puntos += 1
+            puntaje += pesos['monotonicidad']
 
-        # Clasificar según los puntos obtenidos
-        if puntos >= umbral_identificadora:
+        # Clasificar según el puntaje obtenido
+        if puntaje >= umbral_identificadora:
             clasificacion = 'Identificadora'
-        elif puntos >= umbral_posible_identificadora:
+        elif puntaje >= umbral_posible_identificadora:
             clasificacion = 'Posible identificadora'
         else:
             clasificacion = 'No identificadora'
@@ -153,7 +167,7 @@ def evaluar_identificadores(df, umbral_identificadora=7, umbral_posible_identifi
         # Guardar resultados
         resultados.append({
             'Columna': columna,
-            'Puntaje': puntos,
+            'Puntaje': puntaje,
             'Clasificación': clasificacion
         })
 
