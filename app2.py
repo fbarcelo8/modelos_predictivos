@@ -73,24 +73,9 @@ def evaluar_identificadores(df, pesos=None, umbral_identificadora=12, umbral_pos
     """
     Evalúa las columnas de un DataFrame para determinar si son identificadoras, 
     posibles identificadoras o no identificadoras, basándose en una serie de criterios ponderados.
-
-    Parámetros:
-    ----------
-    df : pd.DataFrame
-        DataFrame que contiene las columnas a evaluar.
-    pesos : dict, opcional
-        Diccionario con los pesos asignados a cada criterio. Si no se especifica, todos los criterios tendrán un peso de 1.
-    umbral_identificadora : int, opcional
-        Puntaje mínimo para clasificar una columna como "Identificadora".
-    umbral_posible_identificadora : int, opcional
-        Puntaje mínimo para clasificar una columna como "Posible identificadora".
-
-    Retorna:
-    -------
-    pd.DataFrame
-        DataFrame con las columnas, el puntaje ponderado obtenido y su clasificación.
     """
-    # Pesos por defecto si no se especifican
+
+    # Si pesos no está definido, asignamos valores por defecto
     if pesos is None:
         pesos = {
             'cardinalidad_relativa': 3,
@@ -111,52 +96,44 @@ def evaluar_identificadores(df, pesos=None, umbral_identificadora=12, umbral_pos
         puntaje = 0
 
         # Evaluar criterios y aplicar pesos
-
-        # 1. Cardinalidad relativa (50% o más valores únicos)
         if df[columna].nunique() >= 0.5 * len(df):
             puntaje += pesos['cardinalidad_relativa']
 
-        # 2. Ausencia de valores nulos
         if df[columna].isna().sum() == 0:
             puntaje += pesos['ausencia_nulos']
 
-        # 3. Presencia controlada de duplicados
         if df[columna].value_counts().max() < 0.5 * len(df):
             puntaje += pesos['control_duplicados']
 
-        # 4. Distribución no uniforme
         if df[columna].value_counts(normalize=True).max() < 0.5:
             puntaje += pesos['distribucion_uniforme']
 
-        # 5. Correlación baja con otras columnas
         if pd.api.types.is_numeric_dtype(df[columna]):
-            correlaciones = df.corrwith(df[columna]).drop(columna, errors='ignore')
-            if correlaciones.abs().max() < 0.1:
-                puntaje += pesos['correlacion_baja']
+            # Filtramos solo las columnas numéricas del DataFrame para evitar errores
+            df_numerico = df.select_dtypes(include=['number'])
+            
+            if columna in df_numerico.columns:
+                correlaciones = df_numerico.corrwith(df_numerico[columna]).drop(columna, errors='ignore')
+                if correlaciones.abs().max() < 0.1:
+                    puntaje += pesos['correlacion_baja']
 
-        # 6. Relación con combinaciones de otras columnas
-        if 'columna_referencia' in df.columns:  # Ajustar según contexto
+        if 'columna_referencia' in df.columns:
             if df.groupby('columna_referencia')[columna].nunique().max() == 1:
                 puntaje += pesos['relacion_combinaciones']
 
-        # 7. Compatibilidad de tipos
         if df[columna].dtype in ['int64', 'object']:
             puntaje += pesos['compatibilidad_tipos']
 
-        # 8. Pocas repeticiones por entidad
-        if 'columna_referencia' in df.columns:  # Ajustar según contexto
+        if 'columna_referencia' in df.columns:
             if df.groupby('columna_referencia')[columna].value_counts().max() <= 5:
                 puntaje += pesos['pocas_repeticiones']
 
-        # 9. Consistencia dentro de grupos
         if df[columna].is_unique:
             puntaje += pesos['consistencia_grupos']
 
-        # 10. Monotonicidad
         if not (df[columna].is_monotonic_increasing or df[columna].is_monotonic_decreasing):
             puntaje += pesos['monotonicidad']
 
-        # Clasificar según el puntaje obtenido
         if puntaje >= umbral_identificadora:
             clasificacion = 'Identificadora'
         elif puntaje >= umbral_posible_identificadora:
@@ -164,14 +141,12 @@ def evaluar_identificadores(df, pesos=None, umbral_identificadora=12, umbral_pos
         else:
             clasificacion = 'No identificadora'
 
-        # Guardar resultados
         resultados.append({
             'Columna': columna,
             'Puntaje': puntaje,
             'Clasificación': clasificacion
         })
 
-    # Crear DataFrame con los resultados
     resultados_df = pd.DataFrame(resultados)
 
     return resultados_df
