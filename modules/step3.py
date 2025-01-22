@@ -3,7 +3,8 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
-from modules.utils import detect_variable_type
+from modules.utils import detect_variable_type, reset_steps
+
 
 def step_3():
     if not st.session_state.get('step_3_and_4_enabled', False):
