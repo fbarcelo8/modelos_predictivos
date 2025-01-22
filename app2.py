@@ -13,7 +13,7 @@ def main():
     # Crear columnas para centrar la imagen
     col1, col2, col3 = st.columns([1, 4, 1])  # Ajusta las proporciones para centrar la imagen
     with col2:
-        st.image("C:/Users/barce/Desktop/logo_butler.png", width=450)
+        st.image("images/logo_butler1.png", width=450)
 
     # Mostrar el título centrado y más grande
     st.markdown(
