@@ -1,5 +1,8 @@
 
 import streamlit as st
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 from modules.utils import detect_variable_type
 
 def step_3():
