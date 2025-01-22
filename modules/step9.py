@@ -1,6 +1,8 @@
 
 import streamlit as st
 import pandas as pd
+from sklearn.model_selection import train_test_split
+
 
 def step_9():
     if not st.session_state.get('step_9_enabled', False):
