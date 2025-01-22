@@ -7,6 +7,7 @@ import statsmodels.api as sm
 from sklearn.compose import ColumnTransformer 
 from sklearn.preprocessing import StandardScaler, OneHotEncoder 
 from sklearn.pipeline import Pipeline 
+from modules.utils import reset_steps
 
 def step_6():
     if not st.session_state.get('step_6_enabled', False):
