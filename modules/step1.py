@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 from modules.preprocessing import preprocess_dataset
+from modules.utils import reset_steps
 
 def step_1():
     st.header("Paso 1: Subida de Archivo")
