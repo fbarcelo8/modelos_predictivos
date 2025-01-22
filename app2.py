@@ -9,6 +9,13 @@ from modules.step6 import step_6
 from modules.step7 import step_7
 from modules.step9 import step_9
 
+# Configuración de la página
+st.set_page_config(
+    page_title="AutoModeler",  # Título de la pestaña
+    page_icon="images/B_butler.png",  # Ruta de la imagen en tu proyecto
+    layout="wide",  # Opcional: define el diseño de la página
+)
+
 def main():
     # Crear columnas para centrar la imagen
     col1, col2, col3 = st.columns([1, 4, 1])  # Ajusta las proporciones para centrar la imagen
