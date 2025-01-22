@@ -2,6 +2,11 @@
 import streamlit as st
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression, LogisticRegression
+import pandas as pd
+import statsmodels.api as sm 
+from sklearn.compose import ColumnTransformer 
+from sklearn.preprocessing import StandardScaler, OneHotEncoder 
+from sklearn.pipeline import Pipeline 
 
 def step_6():
     if not st.session_state.get('step_6_enabled', False):
