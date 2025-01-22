@@ -52,7 +52,7 @@ def step_6():
     else:
         st.markdown(
             "**Regresión Logística:** Se ha dividido el conjunto de datos en {}% entrenamiento y {}% prueba."
-            .format(int(train_size * 100), int(test_size * 100))
+            .format(round(train_size * 100), round(test_size * 100))
         )
         model = Pipeline([
             ("preprocessor", preprocessor),
