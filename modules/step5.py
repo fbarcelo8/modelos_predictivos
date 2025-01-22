@@ -1,5 +1,8 @@
 
 import streamlit as st
+import pandas as pd  
+from modules.utils import reset_steps  
+from modules.preprocessing import evaluar_identificadores 
 
 def step_5():
     if not st.session_state.get('step_5_enabled', False):
