@@ -13,7 +13,7 @@ from modules.step9 import step_9
 st.set_page_config(
     page_title="AutoModeler",  # Título de la pestaña
     page_icon="images/B_butler.png",  # Ruta de la imagen en tu proyecto
-    layout="auto",  # Opcional: define el diseño de la página
+    layout="centered",  # Opcional: define el diseño de la página
 )
 
 def main():
