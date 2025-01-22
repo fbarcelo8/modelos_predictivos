@@ -8,7 +8,7 @@ from sklearn.metrics import (
     confusion_matrix, ConfusionMatrixDisplay
 )
 from sklearn.model_selection import train_test_split
-
+from modules.utils import reset_steps
 
 def step_7():
     if not st.session_state.get('step_7_enabled', False):
