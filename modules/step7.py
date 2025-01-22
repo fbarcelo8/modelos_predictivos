@@ -1,6 +1,14 @@
 
 import streamlit as st
-from sklearn.metrics import mean_squared_error, accuracy_score
+import pandas as pd 
+import matplotlib.pyplot as plt 
+from sklearn.metrics import (
+    mean_squared_error, mean_absolute_error, r2_score,
+    accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, log_loss, roc_curve,
+    confusion_matrix, ConfusionMatrixDisplay
+)
+from sklearn.model_selection import train_test_split
+
 
 def step_7():
     if not st.session_state.get('step_7_enabled', False):
