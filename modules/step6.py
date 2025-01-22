@@ -76,7 +76,7 @@ def step_6():
         ols_model = sm.OLS(y_train, X_train_sm).fit()
         coefficients = ols_model.params[1:].values
         p_values = ols_model.pvalues[1:].values
-        coef_df = pd.DataFrame({"Variable": feature_names, "Coeficiente": coefficients, "p-valor": p_values})
+        coef_df = pd.DataFrame({"Variable": clean_feature_names, "Coeficiente": coefficients, "p-valor": p_values})
         st.write("**Coeficientes del modelo con p-valores:**")
         st.table(coef_df)
         st.markdown("""
@@ -144,7 +144,7 @@ def step_6():
         coefficients = logit_model.params[1:].values  # Excluir la constante
 
         # Ajustar las variables predictoras al número correcto de columnas
-        coef_df = pd.DataFrame({"Variable": feature_names, "Coeficiente": coefficients, "p-valor": p_values})
+        coef_df = pd.DataFrame({"Variable": clean_feature_names, "Coeficiente": coefficients, "p-valor": p_values})
         st.write("**Coeficientes del modelo con p-valores:**")
         st.table(coef_df)
         st.markdown("""
