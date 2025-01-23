@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 
+
 def reset_steps(from_step):
     """
     Resetea todos los pasos posteriores al paso dado.
