@@ -1,7 +1,7 @@
 
 import streamlit as st
 import pandas as pd
-
+import statsmodels.api as sm
 
 def reset_steps(from_step):
     """
