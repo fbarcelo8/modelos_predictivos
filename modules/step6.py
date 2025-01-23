@@ -14,6 +14,7 @@ def step_6():
         return
 
     st.header("Paso 6: Entrenamiento del Modelo")
+
     dataset = st.session_state['data']
     fixed_predictors = st.session_state['fixed_predictors']
     candidate_predictors = st.session_state['candidate_predictors']
@@ -22,21 +23,44 @@ def step_6():
     train_size = st.session_state.get('train_size', 0.8)
     test_size = 1 - train_size
 
-    predictors = fixed_predictors + candidate_predictors
-    X = dataset[predictors]
-    y = dataset[target]
+    # Preprocesamiento de datos
+    dataset_clean = pd.get_dummies(dataset, drop_first=True)
+    dataset_clean = dataset_clean.apply(pd.to_numeric, errors='coerce').dropna()
+
+    # Asegurar que las variables están en el dataset preprocesado
+    updated_fixed_predictors = [col for col in dataset_clean.columns if col in fixed_predictors]
+    updated_candidate_predictors = [col for col in dataset_clean.columns if col in candidate_predictors]
+
+    # Determinar el tipo de modelo (lineal o logístico)
+    modelo_tipo = 'lineal' if target_type == "Numérica" else 'logistica'
+
+    # Selección de variables después del preprocesamiento
+    resultado_seleccion = seleccion_forward_bic(
+        dataset_clean,
+        updated_fixed_predictors,
+        updated_candidate_predictors,
+        target,
+        tipo_modelo=modelo_tipo
+    )
+
+    st.session_state['selected_features'] = resultado_seleccion['mejores_variables']
+    st.success(f"Las variables seleccionadas son: {', '.join(resultado_seleccion['mejores_variables'])}")
+
+    predictors = resultado_seleccion['mejores_variables']
+    X = dataset_clean[predictors]
+    y = dataset_clean[target]
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
-    # Preprocesamiento de datos
-    numeric_features = X.select_dtypes(include=["int64", "float64"]).columns
-    categorical_features = X.select_dtypes(include=["object", "category"]).columns
+    # Preprocesamiento de datos para el modelo
+    numeric_features = X.select_dtypes(include=["int64", "float64"]).columns.tolist()
+    categorical_features = X.select_dtypes(include=["object", "category"]).columns.tolist()
 
     preprocessor = ColumnTransformer(
         transformers=[
-            ("num", StandardScaler(), numeric_features),
-            ("cat", OneHotEncoder(drop="first"), categorical_features)
-        ]
+            ("num", StandardScaler(), numeric_features)
+        ],
+        remainder="passthrough"
     )
 
     # Entrenar el modelo
@@ -66,8 +90,8 @@ def step_6():
     # Obtener nombres de columnas después del preprocesamiento
     feature_names = preprocessor.get_feature_names_out(input_features=predictors)
 
-    # Eliminar prefijos 'num_' y 'cat_' de los nombres de las variables
-    clean_feature_names = [name.replace('num__', '').replace('cat__', '') for name in feature_names]
+    # Eliminar prefijos 'num__' de los nombres de las variables
+    clean_feature_names = [name.replace('num__', '') for name in feature_names]
 
     # Calcular coeficientes después del preprocesamiento
     X_train_processed = preprocessor.fit_transform(X_train)
@@ -137,13 +161,12 @@ def step_6():
         - Los coeficientes ($\\beta_i$) miden el cambio esperado en $Y$ por cada unidad adicional en $X_i$, controlando por las demás variables.
         - El intercepto ($\\beta_0$) representa el valor de $Y$ cuando todas las $X_i = 0$.
         """, unsafe_allow_html=True)
+
     else:
         X_train_sm = sm.add_constant(X_train_processed)
         logit_model = sm.Logit(y_train, X_train_sm).fit(disp=0)
-        p_values = logit_model.pvalues[1:].values  # Excluir la constante
-        coefficients = logit_model.params[1:].values  # Excluir la constante
-
-        # Ajustar las variables predictoras al número correcto de columnas
+        coefficients = logit_model.params[1:].values
+        p_values = logit_model.pvalues[1:].values
         coef_df = pd.DataFrame({"Variable": clean_feature_names, "Coeficiente": coefficients, "p-valor": p_values})
         st.write("**Coeficientes del modelo con p-valores:**")
         st.table(coef_df)
@@ -191,4 +214,3 @@ def step_6():
         - Las **odds** aumentan en un factor de $e^{0.5} \\approx 1.65$ por cada unidad adicional de $X_1$. 
         - Esto significa que el evento $Y=1$ es 1.65 veces más probable.
         """, unsafe_allow_html=True)
-      
