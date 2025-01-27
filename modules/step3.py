@@ -10,12 +10,32 @@ def step_3():
     if not st.session_state.get('step_3_and_4_enabled', False):
         return
 
-    st.header("Paso 3: Detección Automática del Tipo de Variable")
-    target = st.session_state['target']
+    st.header("Paso 3: Detección Automática del Tipo de Variables")
     dataset = st.session_state['data']
-    target_type = detect_variable_type(dataset, target)
-    st.write(f"La variable seleccionada '{target}' se detectó como: **{target_type}**")
+    target = st.session_state['target']
 
+    # Detectar tipos de variables para todas las columnas
+    variable_types = {col: detect_variable_type(dataset, col) for col in dataset.columns}
+    
+    # Convertir variables al tipo detectado
+    for col, var_type in variable_types.items():
+        if var_type == "Numérica":
+            dataset[col] = pd.to_numeric(dataset[col], errors='coerce')
+        elif var_type == "Categórica":
+            dataset[col] = dataset[col].astype('category')
+
+    # Guardar el nuevo dataset convertido
+    st.session_state['data'] = dataset
+
+    # Mostrar resumen de los tipos de variables
+    variable_types_df = pd.DataFrame(list(variable_types.items()), columns=["Variable", "Tipo Detectado"])
+    st.write("**Tipos de variables detectadas:**")
+    st.table(variable_types_df)
+
+    # Detectar el tipo de la variable target
+    target_type = variable_types[target]
+    st.write(f"La variable seleccionada '{target}' se detectó como: **{target_type}**")
+    
     # Almacenar el tipo de variable en el estado de sesión
     st.session_state['target_type'] = target_type
 
