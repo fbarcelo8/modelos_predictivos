@@ -50,6 +50,9 @@ def evaluar_identificadores(df, pesos=None, umbral_identificadora=10, umbral_pos
             'monotonicidad': 1
         }
 
+    # Filtrar columnas que son de tipo numérico con decimales
+    df = df.select_dtypes(exclude=['float64'])
+
     resultados = []
 
     for columna in df.columns:
