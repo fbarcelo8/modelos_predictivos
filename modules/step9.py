@@ -11,11 +11,9 @@ def step_9():
     st.header("Paso 9: Visualización de Resultados")
     model = st.session_state['trained_model']
     dataset = st.session_state['data']
-    fixed_predictors = st.session_state['fixed_predictors']
-    candidate_predictors = st.session_state['candidate_predictors']
     target = st.session_state['target']
 
-    predictors = fixed_predictors + candidate_predictors
+    predictors = st.session_state.get('selected_features', [])
     X = dataset[predictors]
     y = dataset[target]
 
@@ -37,4 +35,4 @@ def step_9():
         file_name="resultados_modelo.csv",
         mime="text/csv"
     )
-  
+    
