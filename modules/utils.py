@@ -68,6 +68,11 @@ def seleccion_forward_bic(df, variables_fijas, variables_candidatas, objetivo, t
             y = df[objetivo]
 
             try:
+                # Verificar y convertir datos a formato numérico explícitamente
+                X = df[variables_prueba].astype(float)
+                X = sm.add_constant(X)
+                y = df[objetivo]
+
                 # Ajustar el modelo según el tipo de regresión
                 if tipo_modelo == 'lineal':
                     modelo = sm.OLS(y, X).fit()
@@ -98,3 +103,13 @@ def seleccion_forward_bic(df, variables_fijas, variables_candidatas, objetivo, t
         'mejores_variables': variables_modelo,
         'mejor_BIC': mejor_bic
     }
+
+# Obtener las nuevas columnas preprocesadas que coincidan con los nombres originales
+def update_predictor_lists(df, fixed_predictors, candidate_predictors):
+    # Buscar columnas que empiezan con los nombres de las variables fijas
+    updated_fixed = [col for col in df.columns for prefix in fixed_predictors if col.startswith(prefix)]
+    
+    # Buscar columnas que empiezan con los nombres de las variables candidatas
+    updated_candidates = [col for col in df.columns for prefix in candidate_predictors if col.startswith(prefix)]
+    
+    return updated_fixed, updated_candidates
