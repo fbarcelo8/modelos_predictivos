@@ -35,4 +35,17 @@ def step_9():
         file_name="resultados_modelo.csv",
         mime="text/csv"
     )
-    
+
+    # Guardar el modelo en formato .model usando pickle
+    model_filename = "automodeler_model.model"
+    with open(model_filename, "wb") as model_file:
+        pickle.dump(model, model_file)
+
+    # Descargar el modelo entrenado en formato .model
+    with open(model_filename, "rb") as model_file:
+        st.download_button(
+            label="Descargar Modelo",
+            data=model_file,
+            file_name="automodeler_model.model",
+            mime="application/octet-stream"
+        )
