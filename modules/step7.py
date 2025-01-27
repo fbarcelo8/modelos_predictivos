@@ -9,7 +9,6 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import train_test_split
 from modules.utils import reset_steps
-
 def step_7():
     if not st.session_state.get('step_7_enabled', False):
         return
@@ -17,16 +16,15 @@ def step_7():
     st.header("Paso 7: Evaluación del Modelo")
     model = st.session_state['trained_model']
     dataset = st.session_state['data']
-    fixed_predictors = st.session_state['fixed_predictors']
-    candidate_predictors = st.session_state['candidate_predictors']
     target = st.session_state['target']
     target_type = st.session_state['target_type']
+    train_size = st.session_state.get('train_size', 0.8)
+    test_size = 1 - train_size
 
-    predictors = fixed_predictors + candidate_predictors
-
+    predictors = st.session_state.get('selected_features', [])
     X = dataset[predictors]
     y = dataset[target]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
     if target_type == "Numérica":
         y_pred = model.predict(X_test)
@@ -173,4 +171,4 @@ def step_7():
         ax.set_ylabel("Sensibilidad")
         ax.legend()
         st.pyplot(fig)
-      
+
