@@ -96,7 +96,7 @@ def step_6():
     feature_names = preprocessor.get_feature_names_out(input_features=predictors)
 
     # Eliminar prefijos de los nombres de las variables
-    clean_feature_names = [name.replace('num__', '').replace('reminder__', '') for name in feature_names]
+    clean_feature_names = [name.replace('num__', '').replace('remainder__', '') for name in feature_names]
 
     # Calcular coeficientes después del preprocesamiento
     X_train_processed = preprocessor.fit_transform(X_train)
