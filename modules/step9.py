@@ -34,7 +34,7 @@ def step_9():
     # Descargar resultados como CSV
     csv_data = comparison.to_csv(index=False).encode('utf-8')
     st.download_button(
-        label="📥 Descargar Resultados (CSV)",
+        label="📂 Descargar Resultados (CSV)",
         data=csv_data,
         file_name="resultados_modelo.csv",
         mime="text/csv"
@@ -48,7 +48,7 @@ def step_9():
     # Descargar el modelo entrenado en formato .model
     with open(model_filename, "rb") as model_file:
         st.download_button(
-            label="📥 ⬇️ 💾 🔽 📂Descargar Modelo (.model)",
+            label="📥 Descargar Modelo (.model)",
             data=model_file,
             file_name="automodeler_model.model",
             mime="application/octet-stream"
