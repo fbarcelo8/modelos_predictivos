@@ -105,7 +105,7 @@ def step_6():
         ols_model = sm.OLS(y_train, X_train_sm).fit()
         coefficients = ols_model.params.values
         p_values = ols_model.pvalues.values
-        variables = ['Intercept] + clean_feature_names
+        variables = ['Intercept'] + clean_feature_names
         coef_df = pd.DataFrame({"Variable": variables, "Coeficiente": coefficients, "p-valor": p_values})
         st.write("**Coeficientes del modelo con p-valores:**")
         st.table(coef_df)
@@ -171,9 +171,9 @@ def step_6():
     else:
         X_train_sm = sm.add_constant(X_train_processed)
         logit_model = sm.Logit(y_train, X_train_sm).fit(disp=0)
-        coefficients = ols_model.params.values
-        p_values = ols_model.pvalues.values
-        variables = ['Intercept] + clean_feature_names
+        coefficients = logit_model.params.values
+        p_values = logit_model.pvalues.values
+        variables = ['Intercept'] + clean_feature_names
         coef_df = pd.DataFrame({"Variable": variables, "Coeficiente": coefficients, "p-valor": p_values})
         st.write("**Coeficientes del modelo con p-valores:**")
         st.table(coef_df)
@@ -221,4 +221,3 @@ def step_6():
         - Las **odds** aumentan en un factor de $e^{0.5} \\approx 1.65$ por cada unidad adicional de $X_1$. 
         - Esto significa que el evento $Y=1$ es 1.65 veces más probable.
         """, unsafe_allow_html=True)
-        
