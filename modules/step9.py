@@ -24,14 +24,17 @@ def step_9():
     y_pred = model.predict(X_test)
 
     # Comparación de valores reales vs predichos
-    comparison = pd.DataFrame({"Real": y_test, "Predicción": y_pred})
+    comparison = pd.DataFrame({"Real": y_test.values, "Predicción": y_pred})
     st.write("**Comparación entre valores reales y predichos:**")
     st.dataframe(comparison)
 
-    # Descargar resultados
+    # Sección 9.1: Descargar resultados
+    st.subheader("Paso 9.1: Descargar Resultados")
+
+    # Descargar resultados como CSV
     csv_data = comparison.to_csv(index=False).encode('utf-8')
     st.download_button(
-        label="Descargar Resultados",
+        label="📥 Descargar Resultados (CSV)",
         data=csv_data,
         file_name="resultados_modelo.csv",
         mime="text/csv"
@@ -45,7 +48,7 @@ def step_9():
     # Descargar el modelo entrenado en formato .model
     with open(model_filename, "rb") as model_file:
         st.download_button(
-            label="Descargar Modelo",
+            label="📥 Descargar Modelo (.model)",
             data=model_file,
             file_name="automodeler_model.model",
             mime="application/octet-stream"
