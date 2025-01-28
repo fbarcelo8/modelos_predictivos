@@ -1,6 +1,28 @@
 
 import pandas as pd
 
+def normalize_dataframe(dataset):
+    """
+    Normaliza los tipos de datos del DataFrame para garantizar que todas las columnas sean compatibles con Streamlit.
+    - Convierte columnas categóricas (`category`) a cadenas.
+    - Asegura que no haya objetos o tipos no escalares en el DataFrame.
+
+    Parameters:
+    - dataset: pd.DataFrame, el DataFrame a normalizar.
+
+    Returns:
+    - dataset: pd.DataFrame, el DataFrame con tipos normalizados.
+    """
+    # Convertir categorías a cadenas
+    for col in dataset.select_dtypes(include=['category']):
+        dataset[col] = dataset[col].astype(str)
+
+    # Convertir objetos a cadenas (si es necesario)
+    for col in dataset.select_dtypes(include=['object']):
+        dataset[col] = dataset[col].astype(str)
+
+    return dataset
+
 def preprocess_dataset(dataset, missing_threshold=0.3):
     """
     Limpia y preprocesa el dataset eliminando duplicados y columnas con un porcentaje alto
