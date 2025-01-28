@@ -1,7 +1,7 @@
 
 import streamlit as st
 import pandas as pd
-from modules.preprocessing import preprocess_dataset
+from modules.preprocessing import preprocess_dataset, normalize_dataframe
 from modules.utils import reset_steps
 
 def step_1():
@@ -9,14 +9,11 @@ def step_1():
     Función para la subida y visualización del archivo. Permite cargar datasets en formato
     CSV o Excel, realiza el preprocesamiento y muestra los resultados en Streamlit.
     """
-    import streamlit as st
-    import pandas as pd
 
     st.header("Paso 1: Subida de Archivo")
     uploaded_file = st.file_uploader("Sube tu archivo CSV o Excel", type=["csv", "xlsx", "xls"])
     
     if uploaded_file:
-        # Detectar el nombre del archivo para gestionar el estado de la sesión
         file_name = uploaded_file.name
         if 'uploaded_file_name' in st.session_state and st.session_state['uploaded_file_name'] != file_name:
             st.session_state.clear()
@@ -38,6 +35,9 @@ def step_1():
             # Preprocesar el dataset
             dataset, duplicates_removed, dropped_columns = preprocess_dataset(dataset)
 
+            # Normalizar los tipos de datos
+            dataset = normalize_dataframe(dataset)
+
             # Guardar el dataset en el estado de la sesión
             st.session_state['data'] = dataset
 
@@ -52,6 +52,8 @@ def step_1():
                 st.markdown("No se eliminaron columnas por valores faltantes.")
             
             # Verificar el DataFrame antes de mostrarlo
+            st.write("Tipos de columnas en el dataset:")
+            st.write(dataset.dtypes)  # Mostrar los tipos de datos
             st.write("Vista previa del dataset limpio:")
             st.write(dataset.head(10))  # Mostrar solo las primeras 10 filas
 
@@ -60,4 +62,3 @@ def step_1():
 
         except Exception as e:
             st.error(f"Error al procesar el archivo: {e}")
-
