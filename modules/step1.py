@@ -51,11 +51,13 @@ def step_1():
             else:
                 st.markdown("No se eliminaron columnas por valores faltantes.")
             
-            # Mostrar el dataset
-            st.write(dataset)
+            # Verificar el DataFrame antes de mostrarlo
+            st.write("Vista previa del dataset limpio:")
+            st.write(dataset.head(10))  # Mostrar solo las primeras 10 filas
 
             # Habilitar paso 2
             st.session_state['step_2_enabled'] = True
 
         except Exception as e:
             st.error(f"Error al procesar el archivo: {e}")
+
