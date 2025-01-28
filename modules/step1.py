@@ -26,6 +26,11 @@ def step_1():
         else:
             dataset = pd.read_excel(uploaded_file)
 
+        # Convertir columnas categóricas a tipo 'object'
+        category_columns = dataset.select_dtypes(include=['category']).columns
+        if not category_columns.empty:
+            dataset[category_columns] = dataset[category_columns].astype('object')
+
         dataset, duplicates_removed, dropped_columns = preprocess_dataset(dataset)
         st.session_state['data'] = dataset
         st.success("¡Dataset cargado y preprocesado exitosamente!")
