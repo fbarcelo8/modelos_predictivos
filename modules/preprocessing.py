@@ -26,11 +26,13 @@ def preprocess_dataset(dataset, missing_threshold=0.3):
     # Eliminar columnas con muchos valores faltantes
     dataset_cleaned = dataset_no_duplicates.drop(columns=columns_to_drop)
 
-    # Asegurar que las columnas categóricas y de tipo object sean consistentes
+    # Convertir todas las columnas categóricas y de tipo object a cadenas
     for col in dataset_cleaned.select_dtypes(include=['object', 'category']):
         dataset_cleaned[col] = dataset_cleaned[col].astype(str)
 
-    # Dejar los valores NaN intactos para columnas numéricas y categóricas
+    # Asegurar que las columnas categóricas no sean `category` para compatibilidad con Streamlit
+    for col in dataset_cleaned.select_dtypes(include=['category']):
+        dataset_cleaned[col] = dataset_cleaned[col].astype(str)
 
     return dataset_cleaned, duplicates_removed, columns_to_drop
 
