@@ -31,6 +31,8 @@ def step_1():
         if not category_columns.empty:
             dataset[category_columns] = dataset[category_columns].astype('object')
 
+        dataset.columns = [col.replace(" ", "_").replace(".", "_") for col in dataset.columns]
+
         dataset, duplicates_removed, dropped_columns = preprocess_dataset(dataset)
         st.session_state['data'] = dataset
         st.success("¡Dataset cargado y preprocesado exitosamente!")
