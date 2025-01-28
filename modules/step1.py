@@ -50,6 +50,9 @@ def step_1():
                 )
             else:
                 st.markdown("No se eliminaron columnas por valores faltantes.")
+
+            st.write("Tipos de columnas:")
+            st.write(dataset.dtypes)
             
             # Verificar el DataFrame antes de mostrarlo
             st.write("Vista previa del dataset limpio:")
