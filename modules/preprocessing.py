@@ -4,7 +4,7 @@ import pandas as pd
 def preprocess_dataset(dataset, missing_threshold=0.3):
     """
     Limpia y preprocesa el dataset eliminando duplicados y columnas con un porcentaje alto
-    de valores faltantes. Los valores `NaN` permanecen intactos y no son sustituidos.
+    de valores faltantes. Los valores `NaN` permanecen intactos.
 
     Parameters:
     - dataset: pd.DataFrame, dataset a procesar.
@@ -26,10 +26,11 @@ def preprocess_dataset(dataset, missing_threshold=0.3):
     # Eliminar columnas con muchos valores faltantes
     dataset_cleaned = dataset_no_duplicates.drop(columns=columns_to_drop)
 
-    # Asegurar compatibilidad con herramientas como Streamlit
-    # Convertir columnas categóricas y de tipo object a cadenas para evitar problemas
+    # Asegurar que las columnas categóricas y de tipo object sean consistentes
     for col in dataset_cleaned.select_dtypes(include=['object', 'category']):
         dataset_cleaned[col] = dataset_cleaned[col].astype(str)
+
+    # Dejar los valores NaN intactos para columnas numéricas y categóricas
 
     return dataset_cleaned, duplicates_removed, columns_to_drop
 
