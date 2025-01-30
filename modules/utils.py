@@ -18,18 +18,20 @@ def reset_steps(from_step):
         if step in st.session_state:
             del st.session_state[step]
 
-def detect_variable_type(dataset, target):
+
+def detect_variable_type(dataset, column):
     """
-    Detecta automáticamente el tipo de variable target.
+    Detecta automáticamente el tipo de una variable.
     """
-    unique_values = dataset[target].nunique()
-    if unique_values < 10:
-        if unique_values == 2:
-            return "Categórica Binaria"
-        else:
-            return "Categórica No Binaria"
-    else:
+    unique_values = dataset[column].nunique()
+
+    if unique_values == 2:
+        return "Categórica Binaria"
+    elif dataset[column].dtype in ['int64', 'float64']:
         return "Numérica"
+    else:
+        return "Categórica No Binaria"
+
 
 def seleccion_forward_bic(df, variables_fijas, variables_candidatas, objetivo, tipo_modelo='lineal'):
     """
