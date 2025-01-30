@@ -44,6 +44,7 @@ def step_1():
             st.session_state['variable_types'] = {col: detect_variable_type(dataset, col) for col in dataset.columns}
 
         st.success("¡Dataset cargado exitosamente!")
+        st.dataframe(st.session_state['data'])
         st.markdown(f"El dataset contiene **{dataset.shape[0]}** filas y **{dataset.shape[1]}** columnas.")
         st.markdown(f"Se han eliminado **{duplicates_removed}** registros duplicados.")
         if dropped_columns:
