@@ -24,7 +24,11 @@ def step_9():
     y_pred = model.predict(X_test)
 
     # Comparación de valores reales vs predichos
-    comparison = pd.DataFrame({"Real": y_test.values, "Predicción": y_pred})
+    # Convertir a enteros para evitar checkmarks en la tabla
+    comparison = pd.DataFrame({
+        "Real": y_test.astype(int).values,  # Convertir valores categóricos a enteros
+        "Predicción": y_pred.astype(int)  # Convertir predicciones a enteros
+    })
     st.write("**Comparación entre valores reales y predichos:**")
     st.dataframe(comparison)
 
