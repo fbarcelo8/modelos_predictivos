@@ -36,8 +36,8 @@ def step_6():
     # Obtener la nueva versión del target después de get_dummies()
     new_target_list, _ = update_predictor_lists(dataset_clean, [target], [])
 
-    # Restaurar el nombre original del target
-    original_target = remove_suffix(new_target_list[0])
+    # Restaurar el nombre original del target solo si NO es Numérica
+    original_target = remove_suffix(new_target_list[0]) if target_type != 'Numérica' else new_target_list[0]
 
     # Renombrar la columna en dataset_clean
     dataset_clean = dataset_clean.rename(columns={new_target_list[0]: original_target})
