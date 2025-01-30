@@ -124,3 +124,19 @@ def convert_column_type(dataset, column, new_type):
             dataset[column] = dataset[column].astype(str)
     except Exception as e:
         st.error(f"Error al convertir la columna {column} a {new_type}: {e}")
+
+
+# Función para eliminar el sufijo después del último '_'
+def remove_suffix(col_name):
+    return "_".join(col_name.split("_")[:-1]) if "_" in col_name else col_name
+
+
+# Función para actualizar las listas de predictores después del preprocesamiento
+def update_predictor_lists(df, fixed_predictors, candidate_predictors):
+    # Buscar columnas que empiezan con los nombres de las variables fijas
+    updated_fixed = [col for col in df.columns for prefix in fixed_predictors if col.startswith(prefix)]
+
+    # Buscar columnas que empiezan con los nombres de las variables candidatas
+    updated_candidates = [col for col in df.columns for prefix in candidate_predictors if col.startswith(prefix)]
+
+    return updated_fixed, updated_candidates
