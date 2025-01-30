@@ -31,8 +31,13 @@ def step_1():
             st.error("El archivo cargado está vacío. Por favor, sube un archivo válido.")
             return
 
+        # Normalizar los nombres de las columnas
         dataset.columns = [col.replace(" ", "_").replace(".", "_") for col in dataset.columns]
         st.session_state['data'] = dataset  # Guardamos el dataset original en el estado
+
+        # Preprocesar el dataset
+        dataset, duplicates_removed, dropped_columns = preprocess_dataset(dataset)
+        st.session_state['data'] = dataset
 
         # Detectar los tipos de variables automáticamente
         if 'variable_types' not in st.session_state:
@@ -40,6 +45,11 @@ def step_1():
 
         st.success("¡Dataset cargado exitosamente!")
         st.markdown(f"El dataset contiene **{dataset.shape[0]}** filas y **{dataset.shape[1]}** columnas.")
+        st.markdown(f"Se han eliminado **{duplicates_removed}** registros duplicados.")
+        if dropped_columns:
+            st.markdown(f"Se han eliminado las siguientes columnas por tener más del 30% de valores faltantes: **{', '.join(dropped_columns)}**.")
+        else:
+            st.markdown("No se eliminaron columnas por valores faltantes.")
 
         # Mostrar la tabla interactiva con los tipos de variables
         st.subheader("Tipos de Variables")
