@@ -10,33 +10,32 @@ def step_3():
     if not st.session_state.get('step_3_and_4_enabled', False):
         return
 
-    st.header("Paso 3: Detección Automática del Tipo de Variables")
-    dataset = st.session_state['data']
+    st.header("Paso 3: Confirmación de Tipos de Variables y Distribución de la Variable Target")
+
+    dataset = st.session_state['data'].copy()  # Crear una copia para modificar tipos sin afectar el original
     target = st.session_state['target']
+    variable_types = st.session_state['variable_types']  # Tipos seleccionados en step_1
 
-    # Detectar tipos de variables para todas las columnas
-    variable_types = {col: detect_variable_type(dataset, col) for col in dataset.columns}
-    
-    # Convertir variables al tipo detectado
-    for col, var_type in variable_types.items():
-        if var_type == "Numérica":
-            dataset[col] = pd.to_numeric(dataset[col], errors='coerce')
-        elif var_type == "Categórica":
-            dataset[col] = dataset[col].astype('category')
+    # Asegurar que cada columna tenga el tipo seleccionado o detectado en step_1()
+    for col, new_type in variable_types.items():
+        convert_column_type(dataset, col, new_type)  # Aplicar conversión
 
-    # Guardar el nuevo dataset convertido
-    st.session_state['data'] = dataset
+    # Guardar dataset actualizado con los tipos correctos en session_state
+    st.session_state['data'] = dataset  
 
-    # Mostrar resumen de los tipos de variables
-    variable_types_df = pd.DataFrame(list(variable_types.items()), columns=["Variable", "Tipo Detectado"])
-    st.write("**Tipos de variables detectadas:**")
-    st.table(variable_types_df)
+    # Crear DataFrame con los tipos de variables
+    type_info = pd.DataFrame({
+        "Variable": dataset.columns,
+        "Tipo seleccionado": [variable_types[col] for col in dataset.columns],
+        "type": [dataset[col].dtype for col in dataset.columns]
+    })
 
-    # Detectar el tipo de la variable target
-    target_type = variable_types[target]
-    st.write(f"La variable seleccionada '{target}' se detectó como: **{target_type}**")
-    
+    # Mostrar la tabla con los tipos de variables
+    st.subheader("Tipos de Variables Seleccionados")
+    st.table(type_info)
+
     # Almacenar el tipo de variable en el estado de sesión
+    target_type = variable_types[target]
     st.session_state['target_type'] = target_type
 
     if target_type == "Categórica Binaria":
