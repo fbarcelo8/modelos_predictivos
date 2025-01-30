@@ -112,3 +112,15 @@ def evaluar_identificadores(df, pesos=None, umbral_identificadora=10, umbral_pos
     resultados_df = pd.DataFrame(resultados)
 
     return resultados_df
+
+def convert_column_type(dataset, column, new_type):
+    """
+    Convierte el tipo de una columna del dataset según la selección del usuario.
+    """
+    try:
+        if new_type == "Numérica":
+            dataset[column] = pd.to_numeric(dataset[column], errors='coerce')
+        elif new_type in ["Categórica Binaria", "Categórica No Binaria"]:
+            dataset[column] = dataset[column].astype(str)
+    except Exception as e:
+        st.error(f"Error al convertir la columna {column} a {new_type}: {e}")
