@@ -7,6 +7,7 @@ def step_4():
         return
 
     st.header("Paso 4: Selección del Modelo")
+    dataset = st.session_state['data']
     target_type = st.session_state['target_type']
     previous_model = st.session_state.get('model', None)
     previous_train_size = st.session_state.get('train_size', 0.8)
