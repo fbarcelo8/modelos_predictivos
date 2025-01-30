@@ -71,10 +71,5 @@ def step_1():
         if st.button("Confirmar tipos de las variables"):
             st.session_state['types_confirmed'] = True  # Marcar como confirmados
 
-        # Mostrar vista previa del dataset actualizado solo si se ha confirmado
-        if st.session_state.get('types_confirmed', False):
-            st.write("Vista previa del dataset con tipos confirmados:")
-            st.dataframe(st.session_state['data'])
-
             # Habilitar el siguiente paso
             st.session_state['step_2_enabled'] = True
