@@ -7,7 +7,7 @@ import statsmodels.api as sm
 from sklearn.compose import ColumnTransformer 
 from sklearn.preprocessing import StandardScaler, OneHotEncoder 
 from sklearn.pipeline import Pipeline 
-from modules.utils import reset_steps, seleccion_forward_bic, update_predictor_lists
+from modules.utils import reset_steps, seleccion_forward_bic, update_predictor_lists, remove_suffix
 
 def step_6():
     if not st.session_state.get('step_6_enabled', False):
@@ -31,6 +31,15 @@ def step_6():
 
     # Preprocesamiento de datos
     dataset_clean = pd.get_dummies(filtered_data, drop_first=True).apply(pd.to_numeric, errors='coerce').dropna()
+    
+    # Obtener la nueva versión del target después de get_dummies()
+    new_target_list, _ = update_predictor_lists(dataset_clean, [target], [])
+
+    # Restaurar el nombre original del target
+    original_target = remove_suffix(new_target_list[0])
+
+    # Renombrar la columna en dataset_clean
+    dataset_clean = dataset_clean.rename(columns={new_target_list[0]: original_target})
 
     # Actualizar las listas de predictores con las nuevas columnas
     new_fixed_predictors, new_candidate_predictors = update_predictor_lists(dataset_clean, fixed_predictors, candidate_predictors)
