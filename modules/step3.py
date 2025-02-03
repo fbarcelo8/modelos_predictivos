@@ -38,6 +38,8 @@ def step_3():
     target_type = variable_types[target]
     st.session_state['target_type'] = target_type
 
+    colors = ['#A759FE', '#FFFF4B']
+
     if target_type == "Categórica Binaria":
         st.subheader("Distribución de la Variable Target")
 
@@ -56,7 +58,6 @@ def step_3():
         st.table(target_distribution.style.format({"Porcentaje": "{:.2f}%"}))
 
         # Crear un gráfico de barras con los colores personalizados
-        colors = ['#A759FE', '#FFFF4B']
         fig, ax = plt.subplots()
         sns.barplot(
             x=target_distribution["Categoría"],
@@ -67,6 +68,19 @@ def step_3():
         ax.set_title("Distribución de la Variable Target")
         ax.set_xlabel("Categoría")
         ax.set_ylabel("Frecuencia")
+        st.pyplot(fig)
+
+    elif target_type == "Numérica":
+        st.subheader("Distribución de la Variable Target (Boxplot)")
+
+        fig, ax = plt.subplots()
+        sns.boxplot(
+            y=dataset[target],
+            palette=colors,
+            ax=ax
+        )
+        ax.set_title("Boxplot de la Variable Target")
+        ax.set_ylabel(target)
         st.pyplot(fig)
 
     st.session_state['step_4_enabled'] = True
