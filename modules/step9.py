@@ -35,6 +35,8 @@ def step_9():
     # Sección 9.1: Descargar resultados
     st.subheader("Paso 9.1: Descargar Resultados")
 
+    st.error("Se está trabajando en la descarga del script de la generación del modelo")
+
     # Descargar resultados como CSV
     csv_data = comparison.to_csv(index=False).encode('utf-8')
     st.download_button(
@@ -57,5 +59,3 @@ def step_9():
             file_name="automodeler_model.model",
             mime="application/octet-stream"
         )
-
-    st.error("Se está trabajando en la descarga del script de la generación del modelo")
