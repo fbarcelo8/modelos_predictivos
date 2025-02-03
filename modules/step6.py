@@ -124,7 +124,7 @@ def step_6():
     
             En una **regresión lineal**, los coeficientes ($\\beta$) representan la relación entre las variables explicativas ($X$) y la variable dependiente ($Y$).
     
-            #### A) Forma del modelo
+            #### 1. Forma del modelo
             La ecuación general de una regresión lineal es:
             """, unsafe_allow_html=True)
     
@@ -139,22 +139,22 @@ def step_6():
             - $\\epsilon$: Término de error.
     
     
-            #### B) Interpretación de $\\beta_i$
+            #### 2. Interpretación de $\\beta_i$
             Cada coeficiente $\\beta_i$ indica el **cambio esperado en $Y$** por cada unidad adicional en $X_i$, manteniendo constantes las demás variables.
     
-            ### Casos específicos:
+            ##### Casos específicos:
             - Si $\\beta_i > 0$: Aumentar $X_i$ incrementa $Y$.
             - Si $\\beta_i < 0$: Aumentar $X_i$ disminuye $Y$.
             - Si $\\beta_i = 0$: $X_i$ no tiene efecto sobre $Y$.
     
     
-            #### C) Interpretación del intercepto ($\\beta_0$)
+            #### 3. Interpretación del intercepto ($\\beta_0$)
             El intercepto $\\beta_0$ representa el valor esperado de $Y$ cuando todas las $X_i = 0$. 
     
             - En algunos casos, este valor puede no tener un significado práctico si $X_i = 0$ no es realista.
     
     
-            #### D) Ejemplo práctico
+            #### 4. Ejemplo práctico
             Supongamos el modelo:
             """, unsafe_allow_html=True)
     
@@ -171,7 +171,7 @@ def step_6():
             - Por cada unidad adicional en $X_2$, $Y$ disminuye en 0.5 unidades, manteniendo constante $X_1$.
     
     
-            #### E) Resumen
+            #### 5. Resumen
             En la regresión lineal:
     
             - Los coeficientes ($\\beta_i$) miden el cambio esperado en $Y$ por cada unidad adicional en $X_i$, controlando por las demás variables.
@@ -192,7 +192,7 @@ def step_6():
     
             En una **regresión logística**, los coeficientes ($\\beta$) no se interpretan directamente como cambios en la variable dependiente (como en una regresión lineal), sino en términos de probabilidades y razones de probabilidades (**odds ratios**).
     
-            #### A) Forma del modelo
+            #### 1. Forma del modelo
             La regresión logística modela la relación entre las variables explicativas ($X$) y la probabilidad de que ocurra un evento ($P(Y=1)$):
     
             """, unsafe_allow_html=True)
@@ -206,12 +206,12 @@ def step_6():
             - $\\beta_0$ es el intercepto, y $\\beta_i$ son los coeficientes asociados a cada $X_i$.
     
     
-            #### B) Interpretación de $\\beta_i$
+            #### 2. Interpretación de $\\beta_i$
             - Si $\\beta_i > 0$: Aumentar $X_i$ incrementa la probabilidad de $Y=1$.
             - Si $\\beta_i < 0$: Aumentar $X_i$ disminuye la probabilidad de $Y=1$.
     
     
-            #### C) Odds ratio
+            #### 3. Odds ratio
             El coeficiente transformado exponencialmente ($e^{\\beta_i}$) representa el cambio multiplicativo en las **odds** por cada unidad adicional de $X_i$:
     
             """, unsafe_allow_html=True)
@@ -226,7 +226,7 @@ def step_6():
             - Si $e^{\\beta_i} < 1$: Cada unidad adicional de $X_i$ **disminuye las odds**.
     
     
-            #### D) Ejemplo práctico
+            #### 4. Ejemplo práctico
             Supongamos que $\\beta_1 = 0.5$:
             - Las **odds** aumentan en un factor de $e^{0.5} \\approx 1.65$ por cada unidad adicional de $X_1$. 
             - Esto significa que el evento $Y=1$ es 1.65 veces más probable.
