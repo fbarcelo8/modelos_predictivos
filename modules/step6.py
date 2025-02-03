@@ -119,9 +119,8 @@ def step_6():
         coef_df = pd.DataFrame({"Variable": variables, "Coeficiente": coefficients, "p-valor": p_values})
         st.write("**Coeficientes del modelo con p-valores:**")
         st.table(coef_df)
-        with st.expander("📖 Interpretación de los coeficientes en una regresión lineal"):
+        with st.expander("📖 ### Interpretación de los coeficientes en una regresión lineal"):
             st.markdown("""
-            ### 6.1. Interpretación de los coeficientes en una regresión lineal
     
             En una **regresión lineal**, los coeficientes ($\\beta$) representan la relación entre las variables explicativas ($X$) y la variable dependiente ($Y$).
     
@@ -188,9 +187,8 @@ def step_6():
         coef_df = pd.DataFrame({"Variable": variables, "Coeficiente": coefficients, "p-valor": p_values})
         st.write("**Coeficientes del modelo con p-valores:**")
         st.table(coef_df)
-        with st.expander("📖 Explicación: Interpretación de los coeficientes en una regresión logística"):
+        with st.expander("📖 ### Interpretación de los coeficientes en una regresión logística"):
             st.markdown("""
-            ### 6.1. Interpretación de los coeficientes en una regresión logística
     
             En una **regresión logística**, los coeficientes ($\\beta$) no se interpretan directamente como cambios en la variable dependiente (como en una regresión lineal), sino en términos de probabilidades y razones de probabilidades (**odds ratios**).
     
