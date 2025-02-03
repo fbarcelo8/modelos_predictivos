@@ -57,3 +57,5 @@ def step_9():
             file_name="automodeler_model.model",
             mime="application/octet-stream"
         )
+
+    st.error('Se está trabajando en la descarga del script de la generación del modelo')
