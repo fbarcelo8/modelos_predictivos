@@ -7,6 +7,7 @@ def step_2():
         return
 
     st.header("Paso 2: Selección de la Variable Target")
+    st.warning("AutoModeler es actualmente funcional para predecir variables numéricas mediante una **Regresión Lineal** o variables categóricas binarias mediante una **Regresión Logística**. Próximamente habrá más funcionalidades disponibles.")
     dataset = st.session_state['data']
     previous_target = st.session_state.get('target', None)
     target = st.selectbox("Selecciona la Variable Target", dataset.columns, index=dataset.columns.get_loc(previous_target) if previous_target else 0)
