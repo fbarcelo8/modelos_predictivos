@@ -41,6 +41,9 @@ def main():
         unsafe_allow_html=True
     )
 
+
+    st.error("⚠️ **AVISO**: AutoModeler es actualmente funcional para predecir variables numéricas mediante una **Regresión Lineal** o variables categóricas binarias mediante una **Regresión Logística**. Próximamente habrá más funcionalidades disponibles.")
+    
     st.write("Sube tu dataset y sigue los pasos para analizarlo y entrenar un modelo.")
 
     step_1()
