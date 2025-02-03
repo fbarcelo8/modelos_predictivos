@@ -40,13 +40,13 @@ def step_5():
 
         # Mostrar un mensaje de éxito con las columnas eliminadas
         if identificadoras:
-            st.success(f"Se han eliminado {len(identificadoras)} columnas identificadoras del análisis: {', '.join(identificadoras)}")
+            st.success(f"Se han eliminado {len(identificadoras)} columnas identificadoras **seguras** del análisis: {', '.join(identificadoras)}")
         else:
-            st.info("No se encontraron columnas identificadoras para eliminar.")
+            st.info("No se encontraron columnas identificadoras **seguras** para eliminar.")
 
         # Advertir sobre las posibles identificadoras
         if posibles_identificadoras:
-            st.warning(f"Las siguientes columnas han sido identificadas como posibles identificadoras y pueden afectar al modelo si se seleccionan: {', '.join(posibles_identificadoras)}.\n\nTen en cuenta que si se usan variables identificadoras como posibles predictoras, el modelo tiene altas probabilidades de dar error, por lo que se recomienda deseleccionarlas.")
+            st.warning(f"Las siguientes columnas han sido identificadas como **posibles** identificadoras y pueden afectar al modelo si se seleccionan: {', '.join(posibles_identificadoras)}.\n\nTen en cuenta que si se usan variables identificadoras como posibles predictoras, el modelo tiene altas probabilidades de dar error, por lo que se recomienda deseleccionarlas.")
 
     # Variables actualmente seleccionadas
     fixed_predictors_selected = st.session_state['fixed_predictors']
