@@ -96,6 +96,7 @@ def step_5():
 
         if handle_missing == "Eliminar filas con valores faltantes":
             # Eliminar registros con valores faltantes
+            dataset = dataset.replace(['None', '', 'nan', 'Nan', 'NaN'], np.nan)
             missing_rows_before = len(dataset)
             dataset_cleaned = dataset.dropna(subset=selected_predictors)
             missing_rows_after = len(dataset_cleaned)
