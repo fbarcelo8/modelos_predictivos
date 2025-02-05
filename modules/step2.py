@@ -1,5 +1,6 @@
 
 import streamlit as st
+import numpy as np
 from modules.utils import detect_variable_type, reset_steps
 
 def step_2():
@@ -16,6 +17,7 @@ def step_2():
 
     if target:
         # Eliminar filas con valores faltantes en la variable target
+        dataset = dataset.replace(['None', '', 'nan', 'Nan', 'NaN'], np.nan)
         missing_rows_before = len(dataset)
         dataset_cleaned = dataset.dropna(subset=[target])
         missing_rows_after = len(dataset_cleaned)
