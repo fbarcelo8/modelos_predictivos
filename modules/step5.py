@@ -1,5 +1,6 @@
 
 import streamlit as st
+import numpy as np
 import pandas as pd  
 from modules.utils import reset_steps  
 from modules.preprocessing import evaluar_identificadores 
